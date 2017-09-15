@@ -7,7 +7,6 @@ import entities.Tracker;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import javax.swing.JFrame;
-import javax.swing.Timer;
 
 /**
  *
@@ -17,8 +16,8 @@ public class Window extends Canvas{
     
     public static Main main;
     public final JFrame frame;
-    public static float SFXVolume = 0;
-    public static float MusicVolume = 0;
+    public volatile static float SFXVolume = 0;
+    public volatile static float MusicVolume = 0;
     
     public Window(int width, int height, String title, Main m){
         frame = new JFrame(title);
@@ -33,6 +32,16 @@ public class Window extends Canvas{
         frame.setVisible(true);
         main = m;
         main.start();
+    }
+    
+    public synchronized static void decreaseVolume(){
+        SFXVolume--;
+        MusicVolume--;
+    }
+    
+    public synchronized static void increaseVolume(){
+        SFXVolume++;
+        MusicVolume++;
     }
     
     public static void main(String... args){

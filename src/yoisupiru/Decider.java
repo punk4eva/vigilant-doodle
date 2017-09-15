@@ -83,13 +83,15 @@ public class Decider implements ActionListener, KeyListener{
     }
 
     @Override
-    public void keyTyped(KeyEvent ke){
+    public synchronized void keyTyped(KeyEvent ke){
         switch(ke.getKeyChar()){
             case '0': mode = "Normal"; break;
             case '1': mode = "Tracker"; break;
             case '2': mode = "Shooter"; break;
             case '3': mode = "Gunner"; break;
             case '4': mode = "Tank"; break;
+            case 'o': Window.increaseVolume(); break;
+            case 'l': Window.decreaseVolume(); break;
         }
     }
     @Override
