@@ -16,8 +16,8 @@ public class Window extends Canvas{
     
     public static Main main;
     public final JFrame frame;
-    public volatile static float SFXVolume = 0;
-    public volatile static float MusicVolume = 0;
+    public volatile static float SFXVolume = -3;
+    public volatile static float MusicVolume = -3;
     
     public Window(int width, int height, String title, Main m){
         frame = new JFrame(title);
