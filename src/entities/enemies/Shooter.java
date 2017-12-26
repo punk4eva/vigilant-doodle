@@ -1,13 +1,15 @@
 
-package entities;
+package entities.enemies;
 
+import entities.Bullet;
+import entities.Enemy;
+import entities.GameObject;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
-import javax.swing.Timer;
 import yoisupiru.Handler;
 import yoisupiru.Main;
 
@@ -25,8 +27,6 @@ public class Shooter extends Enemy{
     public Shooter(int level, GameObject targ, Handler hand){
         super("Shooter", 12+12*level, 0, 48, 48, 2*level, level*2);
         target = targ;
-        timer = new Timer(5, this);
-        timer.start();
         handler = hand;
         bullet = new Bullet(4+level, 5+4*level, -1, -1, -1);
     }
@@ -34,8 +34,6 @@ public class Shooter extends Enemy{
     public Shooter(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand){
         super(name, health, damage, w, h, xp, sp);
         target = targ;
-        timer = new Timer(5, this);
-        timer.start();
         handler = hand;
     }
 
@@ -84,8 +82,6 @@ public class Shooter extends Enemy{
     }
 
     void shoot(){
-        if(!alive) System.err.println("NOT ALIVE OOOOOOOOOOOOOOOOOOOH");
-        if(!alive||timer==null||!timer.isRunning()) return;
         int cx = x+width/2, cy = y+height/2;
         double vx, vy;
         int sx, sy;

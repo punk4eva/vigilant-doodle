@@ -3,7 +3,7 @@ package yoisupiru;
 
 import entities.Enemy;
 import entities.Hero;
-import entities.Tracker;
+import entities.enemies.Tracker;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import javax.swing.JFrame;

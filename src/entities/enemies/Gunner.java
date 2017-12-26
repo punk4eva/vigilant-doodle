@@ -1,6 +1,9 @@
 
-package entities;
+package entities.enemies;
 
+import entities.Bullet;
+import entities.GameObject;
+import entities.enemies.Shooter;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

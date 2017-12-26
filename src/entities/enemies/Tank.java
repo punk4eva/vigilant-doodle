@@ -1,6 +1,9 @@
 
-package entities;
+package entities.enemies;
 
+import entities.Enemy;
+import entities.GameObject;
+import entities.enemies.Tracker;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -26,8 +29,6 @@ public class Tank extends Enemy{
         super("Tank", 40+40*level, 20+20*level, 80, 80, 5*level, level/2);
         target = targ;
         handler = hand;
-        timer = new Timer(10, this);
-        timer.start();
     }
 
     @Override

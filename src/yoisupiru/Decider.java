@@ -2,10 +2,13 @@
 package yoisupiru;
 
 import entities.Enemy;
-import entities.Gunner;
-import entities.Shooter;
-import entities.Tank;
-import entities.Tracker;
+import entities.Hero.ShootingMode;
+import entities.consumables.WeaponUpgrade;
+import entities.consumables.WeaponUpgrade.*;
+import entities.enemies.Gunner;
+import entities.enemies.Shooter;
+import entities.enemies.Tank;
+import entities.enemies.Tracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -23,11 +26,11 @@ public class Decider implements ActionListener, KeyListener{
     public int level = 1;
     private final Handler handler;
     private String mode = "Normal";
-    private static final Random r = new Random();
+    public static final Random r = new Random();
     
     public Decider(Main main){
         handler = main.handler;
-        timer = new Timer(9000, this);
+        timer = new Timer(7500, this);
         timer.start();
         main.addKeyListener(this);
     }
@@ -40,7 +43,11 @@ public class Decider implements ActionListener, KeyListener{
 
     @Override
     public void actionPerformed(ActionEvent ae){
-        spawn();
+        if(r.nextInt(5)!=0) spawn();
+        else{
+            System.out.println("Upgrade");
+            getUpgrade().spawn(handler);
+        }
     }
     
     private void spawn(){
@@ -80,6 +87,30 @@ public class Decider implements ActionListener, KeyListener{
                     else return new Tank(level, handler.hero, handler);
                 }
         }
+    }
+    
+    public ShootingMode getWeapon(){
+        switch(r.nextInt(5)){
+            case 0: return ShootingMode.CONSTANT;
+            case 1: return ShootingMode.MACHINE;
+            case 2: return ShootingMode.BURST;
+            case 3: return ShootingMode.GRENADE;
+            default: return ShootingMode.SHOTGUN;
+        }
+    }
+    
+    public WeaponUpgrade getUpgrade(){
+        switch(r.nextInt(4)){
+            case 0: return new SpdUpgrade(1+r.nextInt(3), getWeapon());
+            case 1: return new DmgUpgrade(1+r.nextInt(3), getWeapon());
+            case 2: return new RldUpgrade(1+r.nextInt(3), getWeapon());
+            default: return new ColUpgrade(1+r.nextInt(3), getWeapon());
+        }
+    }
+    
+    public void pause(){
+        if(timer.isRunning()) timer.stop();
+        else timer.start();
     }
 
     @Override

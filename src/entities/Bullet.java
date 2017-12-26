@@ -4,7 +4,6 @@ package entities;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import javax.swing.Timer;
 import yoisupiru.Handler;
 
 /**
@@ -13,16 +12,14 @@ import yoisupiru.Handler;
  */
 public class Bullet extends GameObject{
     
-    final double bulletSpeed;
-    final double damage;
-    final double reloadSpeed;
-    final double bulletHeat;
-    final double cooldownSpeed;
+    public double bulletSpeed;
+    public double damage;
+    public double reloadSpeed;
+    public double bulletHeat;
+    public double cooldownSpeed;
     
     public Bullet(double bs, double dam, double rel, double ht, double cool){
         super("bullet", 5, 6, 6);
-        timer = new Timer(5, this);
-        timer.start();
         bulletSpeed = bs;
         damage = dam;
         reloadSpeed = rel;
@@ -74,6 +71,14 @@ public class Bullet extends GameObject{
         b.velx = vx;
         b.vely = vy;
         return health<=0 ? null : b;
+    }
+    
+    public void upgrade(Bullet b){
+        bulletSpeed += b.bulletSpeed;
+        damage += b.damage;
+        reloadSpeed += b.reloadSpeed;
+        bulletHeat += b.bulletHeat;
+        cooldownSpeed += b.cooldownSpeed;
     }
     
 }

@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import logic.Collision;
 import yoisupiru.Handler;
 import yoisupiru.Main;
+import yoisupiru.Window;
 
 /**
  *
@@ -15,11 +16,10 @@ import yoisupiru.Main;
  */
 public abstract class GameObject extends Collision implements ActionListener{
     
-    public volatile Timer timer;
-    public volatile String animString;
     public volatile double maxhp;
     public volatile double hp;
     public final String name;
+    public volatile boolean alive = true;
     
     public GameObject(String na, double health, int w, int h){
         name = na;
@@ -29,20 +29,11 @@ public abstract class GameObject extends Collision implements ActionListener{
         height = h;
     }
     
-    public GameObject(String na, double health, int delay, int w, int h){
-        name = na;
-        maxhp = health;
-        timer = new Timer(delay, this);
-        hp = health;
-        width = w;
-        height = h;
-    }
-    
-    public void tick(Handler handler){
+    public synchronized void tick(Handler handler){
         healthCheck(handler);
     }
     
-    public void move(){
+    public synchronized void move(){
         xChange += velx%1.0;
         yChange += vely%1.0;
         if(xChange>=1){
@@ -58,22 +49,24 @@ public abstract class GameObject extends Collision implements ActionListener{
     public abstract void render(Graphics g, long frameNum);
     
     @Override
-    public synchronized void actionPerformed(ActionEvent ae){
-        move();
+    public void actionPerformed(ActionEvent ae){
+        synchronized(Main.soundSystem){
+            move();
+        }
     }
     
-    protected void healthCheck(Handler handler){
+    protected synchronized void healthCheck(Handler handler){
         if(hp<1) die(handler);
     }
     
-    protected void boundsCheck(Handler handler){
+    protected synchronized void boundsCheck(Handler handler){
         if(x+width<=0||x>Main.WIDTH||y+height<=0||y>Main.HEIGHT){
             die(handler);
         }
     }
     
     protected void die(Handler handler){
-        animString = "dying";
+        alive = false;
         handler.removeObject(this);
     }
     

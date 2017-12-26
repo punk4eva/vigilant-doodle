@@ -3,9 +3,8 @@ package yoisupiru;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import logic.SoundHandler;
 
@@ -18,20 +17,22 @@ public class Main extends Canvas implements Runnable{
     public Handler handler;
     public static Decider decider;
     private Thread thread;
-    private boolean running = false;
+    private volatile boolean running = false, paused = false;
     public Window window;
     
     private static long frameNumber = 10000;
     private static long frameDivisor = 10000;
     public static final int WIDTH = 860, HEIGHT = WIDTH / 12 * 9;
     public static final SoundHandler soundSystem = new SoundHandler();
+    private Graphics g;
+    private BufferStrategy bs;
     
     public Main(){
         //soundSystem.playAbruptLoop("backtrack.wav");
     }
 
     @Override
-    public synchronized void run(){
+    public void run(){
         this.requestFocus();
         long lastTime = System.nanoTime();
         double amountOfTicks = 60.0;
@@ -43,6 +44,9 @@ public class Main extends Canvas implements Runnable{
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
+            synchronized(soundSystem){ while(paused) try{
+                soundSystem.wait();
+            }catch(InterruptedException e){}}
             for(double d = delta; d >= 1; d--){
                 handler.tick();
             }
@@ -57,13 +61,13 @@ public class Main extends Canvas implements Runnable{
         stop();
     }
     
-    public synchronized void render(int frameInSec){
-        BufferStrategy bs = this.getBufferStrategy();
+    public void render(int frameInSec){
+        bs = this.getBufferStrategy();
         if(bs == null){
             this.createBufferStrategy(4);
             return;
         }
-        Graphics g = bs.getDrawGraphics();
+        g = bs.getDrawGraphics();
         g.setColor(Color.black);
         g.fillRect(0, 0, WIDTH, HEIGHT);
         if(frameInSec%16==0){
@@ -76,6 +80,7 @@ public class Main extends Canvas implements Runnable{
 
     public synchronized void start(){
         thread = new Thread(this);
+        thread.setName("Run Thread");
         thread.start();
         running = true;
     }
@@ -86,6 +91,15 @@ public class Main extends Canvas implements Runnable{
             running = false;
         }catch(Exception e){
             e.printStackTrace();
+        }
+    }
+    
+    public void pause(){
+        paused = !paused;
+        handler.pause();
+        decider.pause();
+        if(!paused) synchronized(soundSystem){
+            soundSystem.notify();
         }
     }
 

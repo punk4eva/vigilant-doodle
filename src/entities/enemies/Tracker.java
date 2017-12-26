@@ -1,6 +1,8 @@
 
-package entities;
+package entities.enemies;
 
+import entities.Enemy;
+import entities.GameObject;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -16,15 +18,11 @@ public class Tracker extends Enemy{
     
     public Tracker(GameObject targ){
         super("Tracker", 40, 5, 32, 32, 1, 1.5);
-        timer = new Timer(5, this);
-        timer.start();
         target = targ;
     }
     
     public Tracker(GameObject targ, int level){
         super("Tracker", 10+10*level, 4+2*level, 32, 32, level, level*1.5);
-        timer = new Timer(5, this);
-        timer.start();
         target = targ;
     }
 

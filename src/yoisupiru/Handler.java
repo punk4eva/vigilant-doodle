@@ -7,8 +7,9 @@ import entities.Hero;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.Timer;
 
 /**
@@ -17,24 +18,38 @@ import javax.swing.Timer;
  */
 public class Handler implements ActionListener{
     
-    public volatile LinkedList<GameObject> objects = new LinkedList<>();
-    private volatile LinkedList<GameObject> newObjects = new LinkedList<>();
-    private volatile LinkedList<GameObject> oldObjects = new LinkedList<>();
-    private volatile Timer movementTimer;
+    public final List<GameObject> objects = new LinkedList<>();
+    private final Timer timer;
     volatile Hero hero;
+    private volatile LinkedBlockingQueue<Runnable> queuedEvents = new LinkedBlockingQueue<>();
     
     public Handler(Hero h){
         hero = h;
-        movementTimer = new Timer(5, this);
-        movementTimer.start();
+        timer = new Timer(5, this);
+        timer.start();
+        new Thread(() -> {
+            while(true) try{
+                queuedEvents.take().run();
+            }catch(InterruptedException ex){}
+        }).start();
     }
     
-    public synchronized void addObject(GameObject ob){
-        newObjects.add(ob);
+    public void addObject(GameObject ob){
+        queuedEvents.add(() -> {
+            synchronized(objects){
+                timer.addActionListener(ob);
+                objects.add(ob);
+            }
+        });
     }
     
-    public synchronized void removeObject(GameObject ob){
-        oldObjects.add(ob);
+    public void removeObject(GameObject ob){
+        queuedEvents.add(() -> {
+            synchronized(objects){
+                timer.removeActionListener(ob);
+                objects.remove(ob);
+            }
+        });
         if(ob instanceof Enemy){
             int l = hero.level;
             hero.tryLevelUp(((Enemy) ob).xp);
@@ -44,50 +59,45 @@ public class Handler implements ActionListener{
                 Main.soundSystem.playSFX("levelUp.wav");
             }else Main.soundSystem.playSFX("Death.wav");
         }else if(ob instanceof Hero){
-            System.out.println("You died on level " + hero.level + "!\nE57: " + E57 + "\nE65:" + E65 + "\nE71: " + E71 + "\nE79: " + E79 + "\nE88: " + E88);
+            System.out.println("You died on level " + hero.level + "!");
             System.exit(0);
         }
     }
     
-    public synchronized void render(Graphics g, long frameNum){
-        try{
-            objects.stream().forEach((o) -> {
+    public void render(Graphics g, long frameNum){
+        synchronized(objects){
+            objects.stream().filter(o -> o.alive).forEach((o) -> {
                 o.render(g, frameNum);
             });
-        }catch(NullPointerException e){System.err.println("Error 00111001");E57++;}
+        }
     }
     
-    public synchronized void tick(){
-        try{
-            objects.stream().forEach(o -> {
+    public void tick(){
+        synchronized(objects){
+            objects.stream().filter(o -> o.alive).forEach(o -> {
                 o.tick(this);
             });
-        }catch(NullPointerException e){System.err.println("Error 01000001");E65++;}
-        try{
-            objects.addAll(newObjects);
-            objects.removeAll(oldObjects);
-            newObjects.clear();
-            oldObjects.clear();
-        }catch(ArrayIndexOutOfBoundsException e){System.err.println("Error 01000111");E71++;}
+        }
     }
     
-    private synchronized void collisionDetection(GameObject ob){
-        try{
-            objects.stream().filter(o -> ob.isColliding(o)).forEach(o -> {
-                ob.collision(o);
-            });
-        }catch(NullPointerException e){System.err.println("Error 01001111");E79++;}
+    private void collisionDetection(GameObject ob){
+        objects.stream().filter(o -> ob.isColliding(o)).forEach(o -> {
+            ob.collision(o);
+        });
     }
 
     @Override
     public void actionPerformed(ActionEvent ae){
-        try{
+        synchronized(objects){
             objects.stream().forEach(o -> {
                 collisionDetection(o);
             });
-        }catch(ConcurrentModificationException e){System.err.println("Error 01011000");E88++;}
+        }
     }
     
-    private int E57=0, E65=0, E71=0, E79=0, E88=0;
+    public void pause(){
+        if(timer.isRunning()) timer.stop();
+        else timer.start();
+    }
     
 }
