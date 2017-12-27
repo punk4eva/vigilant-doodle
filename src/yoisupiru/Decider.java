@@ -1,10 +1,13 @@
 
 package yoisupiru;
 
+import entities.Consumable;
 import entities.Enemy;
 import entities.Hero.ShootingMode;
 import entities.consumables.WeaponUpgrade;
 import entities.consumables.WeaponUpgrade.*;
+import entities.consumables.Buff;
+import entities.consumables.Buff.*;
 import entities.enemies.Gunner;
 import entities.enemies.Shooter;
 import entities.enemies.Tank;
@@ -43,10 +46,10 @@ public class Decider implements ActionListener, KeyListener{
 
     @Override
     public void actionPerformed(ActionEvent ae){
-        if(r.nextInt(5)!=0) spawn();
-        else{
-            System.out.println("Upgrade");
-            getUpgrade().spawn(handler);
+        switch(r.nextInt(8)){
+            case 0: getUpgrade().spawn(handler); break;
+            case 1: case 2: getBuff().spawn(handler); break;
+            default: spawn();
         }
     }
     
@@ -99,12 +102,37 @@ public class Decider implements ActionListener, KeyListener{
         }
     }
     
-    public WeaponUpgrade getUpgrade(){
-        switch(r.nextInt(4)){
-            case 0: return new SpdUpgrade(1+r.nextInt(3), getWeapon());
-            case 1: return new DmgUpgrade(1+r.nextInt(3), getWeapon());
-            case 2: return new RldUpgrade(1+r.nextInt(3), getWeapon());
-            default: return new ColUpgrade(1+r.nextInt(3), getWeapon());
+    public Consumable getUpgrade(){
+        switch(r.nextInt(6)){
+            case 0: return new RegUpgrade(1+r.nextInt(3));
+            case 1: return new HpUpgrade(1+r.nextInt(3));
+            default: ShootingMode s = getWeapon();
+            switch(s){
+                case BURST: case SHOTGUN: switch(r.nextInt(5)){
+                    case 0: return new SpdUpgrade(1+r.nextInt(3), s);
+                    case 1: return new DmgUpgrade(1+r.nextInt(3), s);
+                    case 2: return new RldUpgrade(1+r.nextInt(3), s);
+                    case 3: return new AmoUpgrade(s);
+                    default: return new ColUpgrade(1+r.nextInt(3), s);
+                }
+                default: switch(r.nextInt(4)){
+                    case 0: return new SpdUpgrade(1+r.nextInt(3), s);
+                    case 1: return new DmgUpgrade(1+r.nextInt(3), s);
+                    case 2: return new RldUpgrade(1+r.nextInt(3), s);
+                    default: return new ColUpgrade(1+r.nextInt(3), s);
+                }
+            }
+        }
+    }
+    
+    public Buff getBuff(){
+        switch(r.nextInt(6)){
+            case 0: return new SpdBuff(1+r.nextInt(3), 3000+(int)(r.nextDouble()*12000));
+            case 1: return new DmgBuff(1+r.nextInt(3), 3000+(int)(r.nextDouble()*12000));
+            case 2: return new ImmBuff(1+r.nextInt(3), 2000+(int)(r.nextDouble()*7000));
+            case 3: return new RegBuff(1+r.nextInt(3), 2000+(int)(r.nextDouble()*7500));
+            case 4: return new ShdBuff(1+r.nextInt(3), 3000+(int)(r.nextDouble()*12000));
+            default: return new HpBuff(1+r.nextInt(3));
         }
     }
     

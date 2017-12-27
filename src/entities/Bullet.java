@@ -49,7 +49,7 @@ public class Bullet extends GameObject{
     public void collision(GameObject ob){
         if(ob instanceof Bullet){
             updateBothVelocities(ob);
-        }else{
+        }else if(!(ob instanceof Consumable)){
             hp = -1;
             ob.hp -= damage;
         }
@@ -57,6 +57,15 @@ public class Bullet extends GameObject{
     
     public Bullet create(int sx, int sy, double vx, double vy){
         Bullet b = new Bullet(bulletSpeed, damage, reloadSpeed, bulletHeat, cooldownSpeed);
+        b.x = sx;
+        b.y = sy;
+        b.velx = vx;
+        b.vely = vy;
+        return b;
+    }
+    
+    public Bullet create(int sx, int sy, double vx, double vy, float mult){
+        Bullet b = new Bullet(bulletSpeed, damage*mult, reloadSpeed, bulletHeat, cooldownSpeed);
         b.x = sx;
         b.y = sy;
         b.velx = vx;

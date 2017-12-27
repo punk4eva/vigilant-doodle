@@ -25,6 +25,15 @@ public class HomingBullet extends Bullet{
         return b;
     }
     
+    public HomingBullet create(int sx, int sy, double vx, double vy, float mult, GameObject targ){
+        HomingBullet b = new HomingBullet(bulletSpeed, damage*mult, reloadSpeed, bulletHeat, cooldownSpeed, targ);
+        b.x = sx;
+        b.y = sy;
+        b.velx = vx;
+        b.vely = vy;
+        return b;
+    }
+    
     @Override
     public synchronized void actionPerformed(ActionEvent ae){
         super.actionPerformed(ae);
