@@ -57,6 +57,13 @@ public abstract class Collision{
         IDOfRitchocket = c.ID;
     }
     
+    public void updateOtherVelocity(Collision c){
+        double vx = velx, vy = vely;
+        updateBothVelocities(c);
+        velx = vx;
+        vely = vy;
+    }
+    
     public void velChange(double vx, double vy){
         velx = vx;
         vely = vy;

@@ -41,7 +41,7 @@ public abstract class WeaponUpgrade extends Consumable{
     
     @Override
     public void collision(GameObject ob){
-        if(ob instanceof Hero){
+        if(ob instanceof Hero && hp!=-1){
             ShootingMode.upgrade(this);
             hp = -1;
         }

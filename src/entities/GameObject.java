@@ -3,12 +3,10 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import javax.swing.Timer;
 import java.awt.event.ActionListener;
 import logic.Collision;
 import yoisupiru.Handler;
 import yoisupiru.Main;
-import yoisupiru.Window;
 
 /**
  *
@@ -68,6 +66,10 @@ public abstract class GameObject extends Collision implements ActionListener{
     protected void die(Handler handler){
         alive = false;
         handler.removeObject(this);
+    }
+
+    public void hurt(double damage){
+        hp -= damage;
     }
     
 }

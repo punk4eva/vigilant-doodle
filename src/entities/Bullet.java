@@ -51,7 +51,7 @@ public class Bullet extends GameObject{
             updateBothVelocities(ob);
         }else if(!(ob instanceof Consumable)){
             hp = -1;
-            ob.hp -= damage;
+            ob.hurt(damage);
         }
     }
     
@@ -71,15 +71,6 @@ public class Bullet extends GameObject{
         b.velx = vx;
         b.vely = vy;
         return b;
-    }
-    
-    public Bullet create(int sx, int sy, double vx, double vy, double health){
-        Bullet b = new Bullet(bulletSpeed, damage, reloadSpeed, bulletHeat, cooldownSpeed);
-        b.x = sx;
-        b.y = sy;
-        b.velx = vx;
-        b.vely = vy;
-        return health<=0 ? null : b;
     }
     
     public void upgrade(Bullet b){

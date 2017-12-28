@@ -4,7 +4,8 @@ package yoisupiru;
 import entities.Consumable;
 import entities.Enemy;
 import entities.Hero.ShootingMode;
-import entities.consumables.WeaponUpgrade;
+import entities.bosses.Boss;
+import entities.bosses.TheEviscerator;
 import entities.consumables.WeaponUpgrade.*;
 import entities.consumables.Buff;
 import entities.consumables.Buff.*;
@@ -29,18 +30,21 @@ public class Decider implements ActionListener, KeyListener{
     public int level = 1;
     private final Handler handler;
     private String mode = "Normal";
+    private boolean boss;
     public static final Random r = new Random();
+    private final int spawnDelay;
     
-    public Decider(Main main){
+    public Decider(Main main, int sd){
         handler = main.handler;
-        timer = new Timer(7500, this);
+        spawnDelay = sd;
+        timer = new Timer(2500 + spawnDelay, this);
         timer.start();
         main.addKeyListener(this);
     }
     
     public void levelChange(int l){
         level = l;
-        timer = new Timer(2500 + 10000/l, this);
+        timer = new Timer(2500 + spawnDelay/l, this);
         timer.start();
     }
 
@@ -49,7 +53,7 @@ public class Decider implements ActionListener, KeyListener{
         switch(r.nextInt(8)){
             case 0: getUpgrade().spawn(handler); break;
             case 1: case 2: getBuff().spawn(handler); break;
-            default: spawn();
+            default: if(!boss) spawn();
         }
     }
     
@@ -73,6 +77,10 @@ public class Decider implements ActionListener, KeyListener{
                 t.x = Main.HEIGHT - 32;
                 t.y = r.nextInt(Main.HEIGHT-64) + 32;
         }
+        if(t instanceof Boss){
+            ((Boss) t).playTheme();
+            boss = true;
+        }
         handler.addObject(t);
     }
     
@@ -82,7 +90,9 @@ public class Decider implements ActionListener, KeyListener{
             case "Shooter": return new Shooter(level, handler.hero, handler);
             case "Gunner": return new Gunner(level, handler.hero, handler);
             case "Tank": return new Tank(level, handler.hero, handler);
-            default: if(r.nextInt(2+level)<level){
+            case "Eviscerator": return new TheEviscerator(handler.hero);
+            default: if(level==4) return new TheEviscerator(handler.hero);
+                if(r.nextInt(2+level)<level){
                     if(level<3||r.nextInt(4+level)>level) return new Shooter(level, handler.hero, handler);
                     else return new Gunner(level, handler.hero, handler);
                 }else{
@@ -140,6 +150,11 @@ public class Decider implements ActionListener, KeyListener{
         if(timer.isRunning()) timer.stop();
         else timer.start();
     }
+    
+    public void bossSlain(){
+        Main.soundSystem.playAbruptLoop("backtrack.wav");
+        boss = false;
+    }
 
     @Override
     public synchronized void keyTyped(KeyEvent ke){
@@ -149,6 +164,7 @@ public class Decider implements ActionListener, KeyListener{
             case '2': mode = "Shooter"; break;
             case '3': mode = "Gunner"; break;
             case '4': mode = "Tank"; break;
+            case '5': mode = "Eviscerator"; break;
             case 'o': Window.increaseVolume(); break;
             case 'l': Window.decreaseVolume(); break;
         }

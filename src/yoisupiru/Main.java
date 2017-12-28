@@ -3,8 +3,9 @@ package yoisupiru;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Font;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import logic.SoundHandler;
 
@@ -22,13 +23,18 @@ public class Main extends Canvas implements Runnable{
     
     private static long frameNumber = 10000;
     private static long frameDivisor = 10000;
-    public static final int WIDTH = 860, HEIGHT = WIDTH / 12 * 9;
+    public static final int WIDTH, HEIGHT;
     public static final SoundHandler soundSystem = new SoundHandler();
     private Graphics g;
     private BufferStrategy bs;
+    static{
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        WIDTH = (int)screen.getWidth();
+        HEIGHT = (int)screen.getHeight();
+    }   
     
     public Main(){
-        //soundSystem.playAbruptLoop("backtrack.wav");
+        soundSystem.playAbruptLoop("backtrack.wav");
     }
 
     @Override

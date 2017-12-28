@@ -31,7 +31,7 @@ public class Shooter extends Enemy{
         bullet = new Bullet(4+level, 5+4*level, -1, -1, -1);
     }
     
-    public Shooter(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand){
+    protected Shooter(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand){
         super(name, health, damage, w, h, xp, sp);
         target = targ;
         handler = hand;
@@ -57,7 +57,6 @@ public class Shooter extends Enemy{
         velTick();
         if(r.nextInt(4)==0&&clock!=-1) clock += 0.25;
         if(clock>=4){
-            System.out.println(ae.paramString()+ "  |  " + ae.getActionCommand());
             shoot();
             clock = 0;
         }
@@ -139,7 +138,7 @@ public class Shooter extends Enemy{
                 }
             }
         }
-        handler.addObject(bullet.create(sx, sy, vx, vy, hp));
+        handler.addObject(bullet.create(sx, sy, vx, vy));
     }
     
     void courseCorrection(){

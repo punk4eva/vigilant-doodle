@@ -4,6 +4,7 @@ package yoisupiru;
 import entities.Enemy;
 import entities.GameObject;
 import entities.Hero;
+import entities.bosses.Boss;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,9 +56,10 @@ public class Handler implements ActionListener{
             hero.tryLevelUp(((Enemy) ob).xp);
             System.err.println("Level: " + hero.level + "\nXP: " + hero.xp + " / " + hero.maxxp);
             if(hero.level!=l){
-                Main.decider.levelChange(l);
+                Main.decider.levelChange(hero.level);
                 Main.soundSystem.playSFX("levelUp.wav");
             }else Main.soundSystem.playSFX("Death.wav");
+            if(ob instanceof Boss) Main.decider.bossSlain();
         }else if(ob instanceof Hero){
             System.out.println("You died on level " + hero.level + "!");
             System.exit(0);

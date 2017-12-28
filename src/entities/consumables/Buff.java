@@ -28,7 +28,7 @@ public abstract class Buff extends Consumable{
     
     @Override
     public void collision(GameObject ob){
-        if(ob instanceof Hero){
+        if(ob instanceof Hero && hp!=-1){
             ((Hero) ob).addBuff(this);
             hp = -1;
         }
@@ -102,7 +102,7 @@ public abstract class Buff extends Consumable{
 
         @Override
         public void start(Hero h){
-            h.boostInvulnerability(0.002*time);
+            h.boostInvulnerability(0.002D*(double)time);
         }
 
         @Override

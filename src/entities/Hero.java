@@ -119,7 +119,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         main.addMouseMotionListener(this);
         main.addMouseWheelListener(this);
         main.handler = new Handler(this);
-        main.decider = new Decider(main);
+        main.decider = new Decider(main, 5500);
         main.window = new Window(Main.WIDTH, Main.HEIGHT, "Supiru", main);
     }
     
@@ -258,8 +258,11 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     public void hurt(double dam){
-        if(invulnerability<=0) hp -= dam*(1-damageAbsorption);
-        invulnerability = 1;
+        if(invulnerability<=0){
+            hp -= dam*(1-damageAbsorption);
+            System.out.println("Damage: "+dam);
+            invulnerability = 1;
+        }
     }
     
     public void consume(Consumable c){
@@ -301,7 +304,9 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     public void boostInvulnerability(double i){
+        System.out.println(invulnerability);
         invulnerability += i;
+        System.out.println(invulnerability);
     }
     
     public void boostSpeed(double sp){
