@@ -45,20 +45,21 @@ public class Tracker extends Enemy{
     }
     
     void courseCorrection(){
-        if(target.y<y&&vely>-speed){
+        double dx = target.x+target.width/2, dy = target.y+target.height/2;
+        if(dy<y&&vely>-speed){
             if(vely-0.1<-speed){
                 vely = -speed;
             }else vely -= 0.1;
-        }else if(target.y>y&&vely<speed){
+        }else if(dy>y&&vely<speed){
             if(vely+0.1>speed){
                 vely = speed;
             }else vely += 0.1;
         }
-        if(target.x<x&&velx>-speed){
+        if(dx<x&&velx>-speed){
             if(velx-0.1<-speed){
                 velx = -speed;
             }else velx -= 0.1;
-        }else if(target.x>x&&velx<speed){
+        }else if(dx>x&&velx<speed){
             if(velx+0.1>speed){
                 velx = speed;
             }else velx += 0.1;

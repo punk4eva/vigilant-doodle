@@ -78,12 +78,12 @@ public abstract class Buff extends Consumable{
 
         @Override
         public void start(Hero h){
-            h.setDmgMultiplier(1f + (float)(0.2f*lvl));
+            h.multDmgMultiplier(1f + (float)(0.2f*lvl));
         }
 
         @Override
         public void end(Hero h){
-            h.setDmgMultiplier(1);
+            h.divDmgMultiplier(1f + (float)(0.2f*lvl));
         }
 
         @Override
@@ -96,13 +96,16 @@ public abstract class Buff extends Consumable{
     
     public static class ImmBuff extends Buff{
         
+        private final long ti;
+        
         public ImmBuff(int l, long t){
             super("Immunity", 12, 12, t, l);
+            ti = t;
         }
 
         @Override
         public void start(Hero h){
-            h.boostInvulnerability(0.002D*(double)time);
+            h.boostInvulnerability(0.002D*(double)ti);
         }
 
         @Override

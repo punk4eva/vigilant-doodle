@@ -35,7 +35,7 @@ public class SoundHandler{
                 clip.start();
                 Thread.sleep(clip.getMicrosecondLength()/1000);
             }catch(Exception e){
-                System.err.println(e.getMessage());
+                //System.err.println(e.getMessage());
             }
         });
         SFXThread.start();

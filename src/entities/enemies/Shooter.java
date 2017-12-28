@@ -81,11 +81,10 @@ public class Shooter extends Enemy{
 
     void shoot(){
         int cx = x+width/2, cy = y+height/2;
-        double vx, vy;
-        int sx, sy;
-        double gradient = Math.abs(((double)target.y-cy)/(target.x-cx));
-        if(target.x>cx){
-            if(target.y<cy){ //1st Quartile
+        double vx, vy, dx = target.x+target.width/2, dy = target.y+target.height/2, sx, sy;
+        double gradient = Math.abs(((double)dy-cy)/(dx-cx));
+        if(dx>cx){
+            if(dy<cy){ //1st Quartile
                 if(gradient<1.0){
                     sx = cx+36;
                     sy = cy-(int)(gradient*36);
@@ -111,7 +110,7 @@ public class Shooter extends Enemy{
                 }
             }
         }else{
-            if(target.y>cy){ //3rd Quartile
+            if(dy>cy){ //3rd Quartile
                 if(gradient<1.0){
                     sx = cx-36;
                     sy = cy+(int)(gradient*36);
@@ -137,24 +136,25 @@ public class Shooter extends Enemy{
                 }
             }
         }
-        handler.addObject(bullet.create(sx, sy, vx, vy));
+        handler.addObject(bullet.create((int)sx, (int)sy, vx, vy));
     }
     
     void courseCorrection(){
-        if(target.y<y&&vely>-speed){
+        double dx = target.x+target.width/2, dy = target.y+target.height/2;
+        if(dy<y&&vely>-speed){
             if(vely-0.1<-speed){
                 vely = -speed;
             }else vely -= 0.1;
-        }else if(target.y>y&&vely<speed){
+        }else if(dy>y&&vely<speed){
             if(vely+0.1>speed){
                 vely = speed;
             }else vely += 0.1;
         }
-        if(target.x<x&&velx>-speed){
+        if(dx<x&&velx>-speed){
             if(velx-0.1<-speed){
                 velx = -speed;
             }else velx -= 0.1;
-        }else if(target.x>x&&velx<speed){
+        }else if(dx>x&&velx<speed){
             if(velx+0.1>speed){
                 velx = speed;
             }else velx += 0.1;

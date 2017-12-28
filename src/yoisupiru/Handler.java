@@ -22,7 +22,7 @@ public class Handler implements ActionListener{
     
     public final List<GameObject> objects = new LinkedList<>();
     private final Timer timer;
-    volatile Hero hero;
+    public final Hero hero;
     private volatile LinkedBlockingQueue<Runnable> queuedEvents = new LinkedBlockingQueue<>();
     private final int MOBCAP = 12;
     private final int CONSCAP = 12;

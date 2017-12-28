@@ -3,6 +3,7 @@ package entities;
 
 import entities.HomingBullet.CooldownHomingBullet;
 import entities.consumables.Buff;
+import entities.consumables.Usable;
 import entities.consumables.WeaponUpgrade;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -47,8 +48,9 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     public double damageAbsorption = 0;
     public float damageMult = 1;
     private LinkedList<Integer> currentKeys = new LinkedList<>();
-    private int aimx=-1, aimy=-1;
+    private double aimx=-1, aimy=-1;
     private final List<Buff> buffs = new LinkedList<>();
+    private final List<Usable> usables = new LinkedList<>();
     public static enum ShootingMode{
         BURST(new Bullet(8.2, 0.8, 0.5, 1.8, 0.2)){
             @Override
@@ -77,7 +79,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         GRENADE(new CooldownHomingBullet(2, 40, 0.125, 6.0, 0.15, null)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
-                handler.addObject(((HomingBullet)bullet).create(sx, sy, vx, vy, m, findNearestEnemy(handler)));
+                handler.addObject(((HomingBullet)bullet).create(sx, sy, vx, vy, m, findNearestEnemy(handler, handler.hero)));
             }
         };
         
@@ -99,10 +101,10 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
             throw new IllegalStateException("Unoverriden method!");
         }
         
-        public Enemy findNearestEnemy(Handler handler){
+        public Enemy findNearestEnemy(Handler handler, Hero h){
             synchronized(handler.objects){
                 List l = handler.objects.stream().filter(go -> go instanceof Enemy).sorted((a, b) -> {
-                    int da = a.x+a.y, db = b.x+b.y;
+                    int da = Math.abs(a.x+a.y-h.x-h.y), db = Math.abs(b.x+b.y-h.x-h.y);
                     if(da==db) return 0;
                     if(da>db) return 1;
                     return -1;
@@ -119,7 +121,6 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         main.addMouseListener(this);
         main.addMouseMotionListener(this);
         main.addMouseWheelListener(this);
-        ((CooldownHomingBullet)ShootingMode.GRENADE.bullet).setHero(this);
         main.handler = new Handler(this);
         main.decider = new Decider(main, 5500);
         main.window = new Window(Main.WIDTH, Main.HEIGHT, "Supiru", main);
@@ -168,6 +169,12 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
             g.drawString(b.name, 8, n);
             n+=20;
         }
+        g.setColor(Color.CYAN);
+        n = Main.HEIGHT-58;
+        for(Usable u : usables){
+            g.drawString(u.name, 8, n);
+            n-=20;
+        }
     }
     
     private Color getHealthColor(){
@@ -188,8 +195,8 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         weaponHeat += shootingMode.bullet.bulletHeat;
         int cx = x+width/2, cy = y+height/2;
         double vx, vy;
-        int sx, sy ;
-        double gradient = Math.abs(((double)aimy-cy)/(aimx-cx));
+        int sx, sy;
+        double gradient = Math.abs((aimy-cy)/(aimx-cx));
         if(aimx>cx){
             if(aimy<cy){ //1st Quartile
                 if(gradient<1.0){
@@ -263,7 +270,6 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     public void hurt(double dam){
         if(invulnerability<=0){
             hp -= dam*(1-damageAbsorption);
-            System.out.println("Damage: "+dam);
             invulnerability = 1;
         }
     }
@@ -316,6 +322,14 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         speed += sp;
     }
     
+    public void addUsable(Usable u){
+        usables.add(u);
+    }
+    
+    public void useUsable(Handler ha){
+        if(!usables.isEmpty()) usables.remove(0).use(ha, this, (int)aimx, (int)aimy);
+    }
+    
     public void multSpeed(double sp){
         speed *= sp;
     }
@@ -339,8 +353,12 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         regen += r;
     }
     
-    public void setDmgMultiplier(float m){
-        damageMult = m;
+    public void multDmgMultiplier(float m){
+        damageMult *= m;
+    }
+    
+    public void divDmgMultiplier(float m){
+        damageMult /= m;
     }
     
     public void setMeleeMode(boolean f){
@@ -375,7 +393,9 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         shootingMode = modes[shootingModeIndex];   
     }
     @Override
-    public void keyTyped(KeyEvent ke){}
+    public void keyTyped(KeyEvent ke){
+        if(ke.getKeyChar()=='f') useUsable(Window.main.handler);
+    }
     @Override
     public void keyPressed(KeyEvent ke){
         if(ke.getKeyCode()==KeyBindings.PAUSE) Window.main.pause();

@@ -35,7 +35,10 @@ public class Boss extends Enemy{
     @Override
     public void tick(Handler handler){
         if(phaseNum==phases.length-1){
-            if(hp<1) die(handler);
+            if(hp<1){
+                drop(handler);
+                die(handler);
+            }
         }else if(hp<=phases[phaseNum+1].triggerHealth){
             phaseNum++;
             flythroughMode = phases[phaseNum].flyThrough;
@@ -87,5 +90,7 @@ public class Boss extends Enemy{
     public void playTheme(){
         Main.soundSystem.playAbruptLoop(bgp);
     }
+    
+    public void drop(Handler h){}
     
 }

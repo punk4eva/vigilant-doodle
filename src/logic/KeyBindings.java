@@ -17,5 +17,6 @@ public class KeyBindings {
     public static int PAUSE = KeyEvent.VK_ESCAPE;
     public static int VOLUME_UP = KeyEvent.VK_O;
     public static int VOLUME_DOWN = KeyEvent.VK_L;
+    public static int USE_ITEM = KeyEvent.VK_F;
     
 }

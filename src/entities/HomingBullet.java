@@ -42,20 +42,21 @@ public class HomingBullet extends Bullet{
     
     void courseCorrection(){
         if(target==null) return;
-        if(target.y<y&&vely>-bulletSpeed){
+        int dx = target.x+target.width/2, dy = target.y+target.height/2;
+        if(dy<y&&vely>-bulletSpeed){
             if(vely-0.1<-bulletSpeed){
                 vely = -bulletSpeed;
             }else vely -= 0.1;
-        }else if(target.y>y&&vely<bulletSpeed){
+        }else if(dy>y&&vely<bulletSpeed){
             if(vely+0.1>bulletSpeed){
                 vely = bulletSpeed;
             }else vely += 0.1;
         }
-        if(target.x<x&&velx>-bulletSpeed){
+        if(dx<x&&velx>-bulletSpeed){
             if(velx-0.1<-bulletSpeed){
                 velx = -bulletSpeed;
             }else velx -= 0.1;
-        }else if(target.x>x&&velx<bulletSpeed){
+        }else if(dx>x&&velx<bulletSpeed){
             if(velx+0.1>bulletSpeed){
                 velx = bulletSpeed;
             }else velx += 0.1;
@@ -64,7 +65,6 @@ public class HomingBullet extends Bullet{
     
     public static class CooldownHomingBullet extends HomingBullet{
     
-        private Hero hero;
         private long spawnTime;
         
         public CooldownHomingBullet(double bs, double dam, double rel, double ht, double cool, GameObject targ){
@@ -95,12 +95,8 @@ public class HomingBullet extends Bullet{
         
         @Override
         public void collision(GameObject ob){
-            if(!(ob instanceof Hero && System.currentTimeMillis()-spawnTime>750L))
+            if(!(ob instanceof Hero && System.currentTimeMillis()-spawnTime<750L))
                 super.collision(ob);
-        }
-        
-        public void setHero(Hero h){
-            hero = h;
         }
     
     }
