@@ -23,6 +23,10 @@ public class Gunner extends Shooter{
         bullet = new Bullet(8+level, 3+2*level, -1, -1, -1);
     }
     
+    public Gunner(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand){
+        super(name, health, damage, w, h, xp, sp, targ, hand);
+    }
+    
     @Override
     public void render(Graphics g, long frameNum){
         Graphics2D g2d = (Graphics2D)g;

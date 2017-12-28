@@ -11,6 +11,8 @@ import yoisupiru.Main;
  */
 public abstract class Consumable extends GameObject{
     
+    public boolean forced = false;
+    
     public Consumable(String na, int w, int h){
         super(na, 1, w, h);
     }

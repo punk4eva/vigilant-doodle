@@ -1,6 +1,7 @@
 
 package entities;
 
+import entities.bosses.Boss;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -48,8 +49,8 @@ public class Bullet extends GameObject{
     @Override
     public void collision(GameObject ob){
         if(ob instanceof Bullet){
-            updateBothVelocities(ob);
-        }else if(!(ob instanceof Consumable)){
+            if(!(ob instanceof Missile)) updateBothVelocities(ob);
+        }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
             hp = -1;
             ob.hurt(damage);
         }

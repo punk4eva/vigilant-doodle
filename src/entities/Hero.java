@@ -1,6 +1,7 @@
 
 package entities;
 
+import entities.HomingBullet.CooldownHomingBullet;
 import entities.consumables.Buff;
 import entities.consumables.WeaponUpgrade;
 import java.awt.Color;
@@ -52,7 +53,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         BURST(new Bullet(8.2, 0.8, 0.5, 1.8, 0.2)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
-                for(int n=0;n<10;n+=2) handler.addObject(bullet.create((int)(sx+vx*n), (int)(sy+vy*n), vx, vy, m));
+                for(int n=0;n<bulletAmount*2;n+=2) handler.addObject(bullet.create((int)(sx+vx*n), (int)(sy+vy*n), vx, vy, m));
             }
         },
         SHOTGUN(new Bullet(7, 4, 0.25, 2.5, 0.18)){
@@ -73,7 +74,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
                 handler.addObject(bullet.create(sx, sy, vx, vy, m));
             }
         },
-        GRENADE(new HomingBullet(2, 40, 0.125, 6.0, 0.15, null)){
+        GRENADE(new CooldownHomingBullet(2, 40, 0.125, 6.0, 0.15, null)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
                 handler.addObject(((HomingBullet)bullet).create(sx, sy, vx, vy, m, findNearestEnemy(handler)));
@@ -113,11 +114,12 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
 
     public Hero(Main main){
-        super("Hero", 20, 48, 48);
+        super("Hero", 30, 48, 48);
         main.addKeyListener(this);
         main.addMouseListener(this);
         main.addMouseMotionListener(this);
         main.addMouseWheelListener(this);
+        ((CooldownHomingBullet)ShootingMode.GRENADE.bullet).setHero(this);
         main.handler = new Handler(this);
         main.decider = new Decider(main, 5500);
         main.window = new Window(Main.WIDTH, Main.HEIGHT, "Supiru", main);
@@ -257,6 +259,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         if(invulnerability>0) invulnerability -= 0.01;
     }
     
+    @Override
     public void hurt(double dam){
         if(invulnerability<=0){
             hp -= dam*(1-damageAbsorption);

@@ -236,4 +236,28 @@ public abstract class Buff extends Consumable{
         
     }
     
+    public static class LvlUpgrade extends Buff{
+        
+        public LvlUpgrade(){
+            super("LvlUpgrade", 12, 12, 1, 1);
+            buffSound = "levelUp.wav";
+        }
+
+        @Override
+        public void start(Hero h){
+            h.tryLevelUp(h.maxxp);
+        }
+
+        @Override
+        public void end(Hero h){}
+
+        @Override
+        public void render(Graphics ig, long frameNum){
+            Graphics2D g = (Graphics2D) ig;
+            g.setColor(new Color(240, 100+(int)(frameNum%130), 25));
+            g.fill(AffineTransform.getRotateInstance(Math.PI/4D, x+width/2, y+height/2).createTransformedShape(new Rectangle(x, y, width, height)));
+        }
+        
+    }
+    
 }

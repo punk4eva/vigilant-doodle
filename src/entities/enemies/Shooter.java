@@ -75,7 +75,6 @@ public class Shooter extends Enemy{
     @Override
     public void die(Handler handler){
         super.die(handler);
-        System.out.println("Die");
         bullet = null;
         clock = -1;
     }

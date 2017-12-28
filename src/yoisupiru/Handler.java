@@ -1,6 +1,7 @@
 
 package yoisupiru;
 
+import entities.Consumable;
 import entities.Enemy;
 import entities.GameObject;
 import entities.Hero;
@@ -23,6 +24,9 @@ public class Handler implements ActionListener{
     private final Timer timer;
     volatile Hero hero;
     private volatile LinkedBlockingQueue<Runnable> queuedEvents = new LinkedBlockingQueue<>();
+    private final int MOBCAP = 12;
+    private final int CONSCAP = 12;
+    private int mobNum = 0, consNum = 0;
     
     public Handler(Hero h){
         hero = h;
@@ -37,9 +41,23 @@ public class Handler implements ActionListener{
     
     public void addObject(GameObject ob){
         queuedEvents.add(() -> {
-            synchronized(objects){
-                timer.addActionListener(ob);
-                objects.add(ob);
+            if(ob instanceof Enemy){
+                if(mobNum<MOBCAP) synchronized(objects){
+                    mobNum++;
+                    timer.addActionListener(ob);
+                    objects.add(ob);
+                }
+            }else if(ob instanceof Consumable){
+                if(consNum<CONSCAP&&!((Consumable)ob).forced) synchronized(objects){
+                    consNum++;
+                    timer.addActionListener(ob);
+                    objects.add(ob);
+                }
+            }else{
+                synchronized(objects){
+                    timer.addActionListener(ob);
+                    objects.add(ob);
+                }
             }
         });
     }
@@ -52,6 +70,7 @@ public class Handler implements ActionListener{
             }
         });
         if(ob instanceof Enemy){
+            mobNum--;
             int l = hero.level;
             hero.tryLevelUp(((Enemy) ob).xp);
             System.err.println("Level: " + hero.level + "\nXP: " + hero.xp + " / " + hero.maxxp);
@@ -63,7 +82,7 @@ public class Handler implements ActionListener{
         }else if(ob instanceof Hero){
             System.out.println("You died on level " + hero.level + "!");
             System.exit(0);
-        }
+        }else if(ob instanceof Consumable && !((Consumable)ob).forced) consNum--;
     }
     
     public void render(Graphics g, long frameNum){

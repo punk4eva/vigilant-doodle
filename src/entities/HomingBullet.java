@@ -62,4 +62,47 @@ public class HomingBullet extends Bullet{
         }
     }
     
+    public static class CooldownHomingBullet extends HomingBullet{
+    
+        private Hero hero;
+        private long spawnTime;
+        
+        public CooldownHomingBullet(double bs, double dam, double rel, double ht, double cool, GameObject targ){
+            super(bs, dam, rel, ht, cool, targ);
+        }
+        
+        @Override
+        public CooldownHomingBullet create(int sx, int sy, double vx, double vy, GameObject targ){
+            CooldownHomingBullet b = new CooldownHomingBullet(bulletSpeed, damage, reloadSpeed, bulletHeat, cooldownSpeed, targ);
+            b.x = sx;
+            b.y = sy;
+            b.velx = vx;
+            b.vely = vy;
+            b.spawnTime = System.currentTimeMillis();
+            return b;
+        }
+
+        @Override
+        public CooldownHomingBullet create(int sx, int sy, double vx, double vy, float mult, GameObject targ){
+            CooldownHomingBullet b = new CooldownHomingBullet(bulletSpeed, damage*mult, reloadSpeed, bulletHeat, cooldownSpeed, targ);
+            b.x = sx;
+            b.y = sy;
+            b.velx = vx;
+            b.vely = vy;
+            b.spawnTime = System.currentTimeMillis();
+            return b;
+        }
+        
+        @Override
+        public void collision(GameObject ob){
+            if(!(ob instanceof Hero && System.currentTimeMillis()-spawnTime>750L))
+                super.collision(ob);
+        }
+        
+        public void setHero(Hero h){
+            hero = h;
+        }
+    
+    }
+    
 }

@@ -15,8 +15,9 @@ import yoisupiru.Main;
 public class Boss extends Enemy{
 
     private final String bgp;
-    private final BossPhase[] phases;
-    private int phaseNum = 0;
+    protected final BossPhase[] phases;
+    protected int phaseNum = 0;
+    public boolean flythroughMode = false;
     private final static int w = Main.WIDTH/3, sy = Main.HEIGHT*6/7;
     
     public Boss(String na, double health, int x, String bgp_, BossPhase... ph){
@@ -37,10 +38,12 @@ public class Boss extends Enemy{
             if(hp<1) die(handler);
         }else if(hp<=phases[phaseNum+1].triggerHealth){
             phaseNum++;
+            flythroughMode = phases[phaseNum].flyThrough;
+            hp = phases[phaseNum].triggerHealth;
             width = phases[phaseNum].width;
             height = phases[phaseNum].height;
-            y = phases[phaseNum].y;
-            x = phases[phaseNum].x;
+            phases[phaseNum].y = y;
+            phases[phaseNum].x = x;
         }
     }
     
@@ -54,10 +57,18 @@ public class Boss extends Enemy{
     protected abstract class BossPhase extends Enemy{
 
         private final double triggerHealth;
+        private final boolean flyThrough;
         
         public BossPhase(double th, double dam, int w, int h, double sp){
             super(null, 1, dam, w, h, 0, sp);
             triggerHealth = th;
+            flyThrough = false;
+        }
+        
+        public BossPhase(double th, double dam, int w, int h, double sp, boolean f){
+            super(null, 1, dam, w, h, 0, sp);
+            triggerHealth = th;
+            flyThrough = f;
         }
         
     }

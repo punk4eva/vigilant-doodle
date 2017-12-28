@@ -20,9 +20,7 @@ public abstract class Enemy extends GameObject{
 
     @Override
     public void collision(GameObject ob){
-        if(ob instanceof Bullet){
-            hp -= ((Bullet) ob).damage;
-        }else if(ob instanceof Hero){
+        if(ob instanceof Hero){
             ((Hero) ob).hurt(damage);
         }
     }

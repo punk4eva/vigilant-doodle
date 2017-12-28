@@ -90,8 +90,8 @@ public class Decider implements ActionListener, KeyListener{
             case "Shooter": return new Shooter(level, handler.hero, handler);
             case "Gunner": return new Gunner(level, handler.hero, handler);
             case "Tank": return new Tank(level, handler.hero, handler);
-            case "Eviscerator": return new TheEviscerator(handler.hero);
-            default: if(level==4) return new TheEviscerator(handler.hero);
+            case "Eviscerator": return new TheEviscerator(handler, handler.hero, 400, 800, 500);
+            default: if(level==4) return new TheEviscerator(handler, handler.hero, 400, 800, 500);
                 if(r.nextInt(2+level)<level){
                     if(level<3||r.nextInt(4+level)>level) return new Shooter(level, handler.hero, handler);
                     else return new Gunner(level, handler.hero, handler);
@@ -113,9 +113,10 @@ public class Decider implements ActionListener, KeyListener{
     }
     
     public Consumable getUpgrade(){
-        switch(r.nextInt(6)){
+        switch(r.nextInt(8)){
             case 0: return new RegUpgrade(1+r.nextInt(3));
             case 1: return new HpUpgrade(1+r.nextInt(3));
+            case 2: if(level!=4) return new LvlUpgrade();
             default: ShootingMode s = getWeapon();
             switch(s){
                 case BURST: case SHOTGUN: switch(r.nextInt(5)){
