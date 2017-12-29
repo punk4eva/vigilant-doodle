@@ -21,9 +21,11 @@ public class Boss extends Enemy{
     private final static int w = Main.WIDTH/3, sy = Main.HEIGHT*6/7;
     
     public Boss(String na, double health, int x, String bgp_, BossPhase... ph){
-        super(na, health, ph[0].damage, ph[0].width, ph[0].height, x, ph[0].speed);
+        super(na, health, ph[0].damage, ph[0].width, ph[0].height, x, ph[0].speed, -1, -1);
         bgp = bgp_;
         phases = ph;
+        speed = ph[0].speed;
+        damage = ph[0].damage;
     }
 
     @Override
@@ -63,13 +65,17 @@ public class Boss extends Enemy{
         private final boolean flyThrough;
         
         public BossPhase(double th, double dam, int w, int h, double sp){
-            super(null, 1, dam, w, h, 0, sp);
+            super(null, 1, dam, w, h, 0, sp, -1, -1);
             triggerHealth = th;
+            speed = sp;
+            damage = dam;
             flyThrough = false;
         }
         
         public BossPhase(double th, double dam, int w, int h, double sp, boolean f){
-            super(null, 1, dam, w, h, 0, sp);
+            super(null, 1, dam, w, h, 0, sp, -1, -1);
+            speed = sp;
+            damage = dam;
             triggerHealth = th;
             flyThrough = f;
         }

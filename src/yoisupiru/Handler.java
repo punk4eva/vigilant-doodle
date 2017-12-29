@@ -9,6 +9,7 @@ import entities.bosses.Boss;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -48,7 +49,7 @@ public class Handler implements ActionListener{
                     objects.add(ob);
                 }
             }else if(ob instanceof Consumable){
-                if(consNum<CONSCAP&&!((Consumable)ob).forced) synchronized(objects){
+                if(consNum<CONSCAP||((Consumable)ob).forced) synchronized(objects){
                     consNum++;
                     timer.addActionListener(ob);
                     objects.add(ob);
@@ -93,14 +94,6 @@ public class Handler implements ActionListener{
         }
     }
     
-    public void tick(){
-        synchronized(objects){
-            objects.stream().filter(o -> o.alive).forEach(o -> {
-                o.tick(this);
-            });
-        }
-    }
-    
     private void collisionDetection(GameObject ob){
         objects.stream().filter(o -> ob.isColliding(o)).forEach(o -> {
             ob.collision(o);
@@ -110,15 +103,34 @@ public class Handler implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent ae){
         synchronized(objects){
+            objects.stream().filter(o -> o.alive).forEach(o -> {
+                o.tick(this);
+            });
             objects.stream().forEach(o -> {
                 collisionDetection(o);
             });
         }
+        Main.frameNumber+=0.3;
     }
     
     public void pause(){
         if(timer.isRunning()) timer.stop();
         else timer.start();
+    }
+    
+    protected void clearEnemies(){
+        queuedEvents.add(() -> {
+            synchronized(objects){
+                for(Iterator<GameObject> iter=objects.iterator();iter.hasNext();){
+                    GameObject ob = iter.next();
+                    if(ob instanceof Enemy){
+                        timer.removeActionListener(ob);
+                        iter.remove();
+                        mobNum--;
+                    }
+                }
+            }
+        });
     }
     
 }

@@ -38,7 +38,7 @@ public abstract class Usable extends Consumable{
         final int healthRestore;
         
         public HealingPotion(int lvl){
-            super("Healing Potion", 12, 12);
+            super("Healing Potion", 18, 18);
             healthRestore = lvl*7;
         }
 
@@ -60,13 +60,13 @@ public abstract class Usable extends Consumable{
         final ActualBullet bullet;
         
         public DeathMissile(int lvl){
-            super("Death Missile", 12, 12);
+            super("Death Missile", 18, 18);
             bullet = new ActualBullet(lvl*30);
         }
 
         @Override
         public void use(Handler handler, Hero h, int ax, int ay){
-            int cx = x+width/2, cy = y+height/2;
+            int cx = h.x+h.width/2, cy = h.y+h.height/2;
             double vx, vy, sx, sy, dx = ax, dy = ay;
             double gradient = Math.abs(((double)dy-cy)/(dx-cx));
             if(dx>cx){
@@ -85,12 +85,12 @@ public abstract class Usable extends Consumable{
                 }else{ //2nd Quartile
                     if(gradient<1.0){
                         sx = cx+36;
-                        sy = cy+(int)(gradient*36);
+                        sy = cy+(int)(gradient*36d);
                         vx = bullet.bulletSpeed;
                         vy = vx*gradient;
                     }else{
                         sy = cy+36;
-                        sx = cx+(int)(36/gradient);
+                        sx = cx+(int)(36d/gradient);
                         vy = bullet.bulletSpeed;
                         vx = vy/gradient;
                     }
@@ -99,24 +99,24 @@ public abstract class Usable extends Consumable{
                 if(dy>cy){ //3rd Quartile
                     if(gradient<1.0){
                         sx = cx-36;
-                        sy = cy+(int)(gradient*36);
+                        sy = cy+(int)(gradient*36d);
                         vx = -bullet.bulletSpeed;
                         vy = vx*-gradient;
                     }else{
                         sy = cy+36;
-                        sx = cx-(int)(36/gradient);
+                        sx = cx-(int)(36d/gradient);
                         vy = bullet.bulletSpeed;
                         vx = vy/-gradient;
                     }
                 }else{ //4th Quartile
                     if(gradient<1.0){
                         sx = cx-36;
-                        sy = cy-(int)(gradient*36);
+                        sy = cy-(int)(gradient*36d);
                         vx = -bullet.bulletSpeed;
                         vy = vx*gradient;
                     }else{
                         sy = cy-36;
-                        sx = cx-(int)(36/gradient);
+                        sx = cx-(int)(36d/gradient);
                         vy = -bullet.bulletSpeed;
                         vx = vy/gradient;
                     }
@@ -197,7 +197,7 @@ public abstract class Usable extends Consumable{
         private final int ti;
         
         public Shield(int lvl){
-            super("Shield", 12, 12);
+            super("Shield", 18, 18);
             ti = 12*lvl;
         }
 

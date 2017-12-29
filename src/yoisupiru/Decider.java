@@ -33,18 +33,21 @@ public class Decider implements ActionListener, KeyListener{
     private boolean boss;
     public static final Random r = new Random();
     private final int spawnDelay;
+    private static final int MINSPAWNDELAY = 7000; 
     
     public Decider(Main main, int sd){
         handler = main.handler;
         spawnDelay = sd;
-        timer = new Timer(2500 + spawnDelay, this);
+        int sp = 1500+spawnDelay;
+        timer = new Timer(sp<MINSPAWNDELAY ? MINSPAWNDELAY : sp, this);
         timer.start();
         main.addKeyListener(this);
     }
     
     public void levelChange(int l){
         level = l;
-        timer = new Timer(2500 + spawnDelay/l, this);
+        int sp = 2500 + spawnDelay/l;
+        timer = new Timer(sp<MINSPAWNDELAY ? MINSPAWNDELAY : sp, this);
         timer.start();
     }
 
@@ -80,6 +83,7 @@ public class Decider implements ActionListener, KeyListener{
         if(t instanceof Boss){
             ((Boss) t).playTheme();
             boss = true;
+            handler.clearEnemies();
         }
         handler.addObject(t);
     }
@@ -91,12 +95,12 @@ public class Decider implements ActionListener, KeyListener{
             case "Gunner": return new Gunner(level, handler.hero, handler);
             case "Tank": return new Tank(level, handler.hero, handler);
             case "Eviscerator": return new TheEviscerator(handler, handler.hero, 400, 800, 500);
-            default: if(level==4) return new TheEviscerator(handler, handler.hero, 400, 800, 500);
+            default: if(level==5) return new TheEviscerator(handler, handler.hero, 400, 800, 500);
                 if(r.nextInt(2+level)<level){
                     if(level<3||r.nextInt(4+level)>level) return new Shooter(level, handler.hero, handler);
                     else return new Gunner(level, handler.hero, handler);
                 }else{
-                    if(level<4||r.nextInt(5+level)>level) return new Tracker(handler.hero, level);
+                    if(level<6||r.nextInt(6+level)>level) return new Tracker(handler.hero, level);
                     else return new Tank(level, handler.hero, handler);
                 }
         }
@@ -116,7 +120,7 @@ public class Decider implements ActionListener, KeyListener{
         switch(r.nextInt(8)){
             case 0: return new RegUpgrade(1+r.nextInt(3));
             case 1: return new HpUpgrade(1+r.nextInt(3));
-            case 2: if(level!=4) return new LvlUpgrade();
+            case 2: if(level!=5) return new LvlUpgrade();
             default: ShootingMode s = getWeapon();
             switch(s){
                 case BURST: case SHOTGUN: switch(r.nextInt(5)){

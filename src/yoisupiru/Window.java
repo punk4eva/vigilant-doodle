@@ -46,7 +46,7 @@ public class Window extends Canvas{
     
     public static void main(String... args){
         Main m = new Main();
-        Hero hero = new Hero(m);
+        Hero hero = new Hero(m, m.getDifficulty());
         hero.x = 100;
         hero.y = 100;
         m.handler.addObject(hero);

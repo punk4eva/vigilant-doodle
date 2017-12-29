@@ -25,14 +25,15 @@ public class Shooter extends Enemy{
     public double clock = 0;
 
     public Shooter(int level, GameObject targ, Handler hand){
-        super("Shooter", 12+12*level, 0, 48, 48, 2*level, level*2);
+        super("Shooter", 12+12*level, 0, 48, 48, 2*level, level*2, 4.5, 0);
         target = targ;
         handler = hand;
-        bullet = new Bullet(4+level, 5+4*level, -1, -1, -1);
+        int bd = 5+4*level;
+        bullet = new Bullet(4+level, bd<45?bd:45, -1, -1, -1);
     }
     
-    protected Shooter(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand){
-        super(name, health, damage, w, h, xp, sp);
+    protected Shooter(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand, double ms, double md){
+        super(name, health, damage, w, h, xp, sp, ms, md);
         target = targ;
         handler = hand;
     }
@@ -87,24 +88,24 @@ public class Shooter extends Enemy{
             if(dy<cy){ //1st Quartile
                 if(gradient<1.0){
                     sx = cx+36;
-                    sy = cy-(int)(gradient*36);
+                    sy = cy-(int)(gradient*36d);
                     vx = bullet.bulletSpeed;
                     vy = vx*-gradient;
                 }else{
                     sy = cy-36;
-                    sx = cx+(int)(36/gradient);
+                    sx = cx+(int)(36d/gradient);
                     vy = -bullet.bulletSpeed;
                     vx = vy/-gradient;
                 }
             }else{ //2nd Quartile
                 if(gradient<1.0){
                     sx = cx+36;
-                    sy = cy+(int)(gradient*36);
+                    sy = cy+(int)(gradient*36d);
                     vx = bullet.bulletSpeed;
                     vy = vx*gradient;
                 }else{
                     sy = cy+36;
-                    sx = cx+(int)(36/gradient);
+                    sx = cx+(int)(36d/gradient);
                     vy = bullet.bulletSpeed;
                     vx = vy/gradient;
                 }
@@ -113,24 +114,24 @@ public class Shooter extends Enemy{
             if(dy>cy){ //3rd Quartile
                 if(gradient<1.0){
                     sx = cx-36;
-                    sy = cy+(int)(gradient*36);
+                    sy = cy+(int)(gradient*36d);
                     vx = -bullet.bulletSpeed;
                     vy = vx*-gradient;
                 }else{
                     sy = cy+36;
-                    sx = cx-(int)(36/gradient);
+                    sx = cx-(int)(36d/gradient);
                     vy = bullet.bulletSpeed;
                     vx = vy/-gradient;
                 }
             }else{ //4th Quartile
                 if(gradient<1.0){
                     sx = cx-36;
-                    sy = cy-(int)(gradient*36);
+                    sy = cy-(int)(gradient*36d);
                     vx = -bullet.bulletSpeed;
                     vy = vx*gradient;
                 }else{
                     sy = cy-36;
-                    sx = cx-(int)(36/gradient);
+                    sx = cx-(int)(36d/gradient);
                     vy = -bullet.bulletSpeed;
                     vx = vy/gradient;
                 }

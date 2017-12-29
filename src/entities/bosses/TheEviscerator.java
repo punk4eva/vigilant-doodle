@@ -16,6 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
+import java.util.LinkedList;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -40,6 +41,7 @@ public class TheEviscerator extends Boss{
     
     @Override
     public void drop(Handler hand){
+        ((Phase3) phases[2]).disarmTraps();
         Usable u;
         switch(Decider.r.nextInt(3)){
             case 0: u = new HealingPotion(4); break;
@@ -218,6 +220,7 @@ public class TheEviscerator extends Boss{
         protected boolean minionActive = false;
         private final double healthPerMinion;
         private Boss instance;
+        private long spawnTime = -1;
         
         public Phase2(Handler h, GameObject targ, double th, double actHealth){
             super(th, 3, 120, 120, 0.5, true);
@@ -293,10 +296,11 @@ public class TheEviscerator extends Boss{
         @Override
         public void actionPerformed(ActionEvent ae){
             super.actionPerformed(ae);
+            if(spawnTime==-1) spawnTime = System.currentTimeMillis();
             clock--;
             isNearEdge();
             if(clock<=0){
-                clock = Decider.r.nextInt(601) + 150;
+                setClock();
                 changeDirection();
                 if(!minionActive) switch(Decider.r.nextInt(3)){
                     case 0: spawnMinion(); return;
@@ -305,6 +309,11 @@ public class TheEviscerator extends Boss{
                 }else if(Decider.r.nextInt(2)==0) fireMissile();
                 else spawnTracker();
             }
+        }
+        
+        private void setClock(){
+            int sub = (int)(System.currentTimeMillis()-spawnTime)/113;
+            clock = 150 + Decider.r.nextInt(601-(sub<400?sub:400));
         }
         
         private void changeDirection(){
@@ -320,7 +329,7 @@ public class TheEviscerator extends Boss{
         }
         
         void spawnTracker(){
-            Tracker t = new Tracker(target, 3-minsLeft/2);
+            Tracker t = new Tracker(target, 5-minsLeft/2);
             t.x = x;
             t.y = y;
             handler.addObject(t);
@@ -403,11 +412,11 @@ public class TheEviscerator extends Boss{
             final int minionNum;
 
             public Minion(int mN){
-                super("Evisceration Machine", Phase2.this.healthPerMinion, mN, 48, 48, 0, 2.5*mN, Phase2.this.target, Phase2.this.handler);
+                super("Evisceration Machine", Phase2.this.healthPerMinion, mN, 48, 48, 0, 2.75+0.25*mN, Phase2.this.target, Phase2.this.handler, 10000, 10000);
                 minionNum = mN;
                 x = Phase2.this.x;
                 y = Phase2.this.y;
-                bullet = new Bullet(8+mN, 3+2*mN, -1, -1, -1);
+                bullet = new Bullet(8+mN, 3+5*mN, -1, -1, -1);
             }
             
             @Override
@@ -454,6 +463,7 @@ public class TheEviscerator extends Boss{
         private long spawnTime = -1;
         private boolean lunging = false;
         private int clock = 0;
+        private LinkedList<Trap> traps = new LinkedList<>();
         
         public Phase3(Handler h, GameObject targ, double th, double dam, double sp){
             super(th, dam, 150, 150, sp);
@@ -523,7 +533,9 @@ public class TheEviscerator extends Boss{
         private void setTraps(){
             spawnTime = System.currentTimeMillis();
             for(int n=0, max=Decider.r.nextInt(5)+3;n<max;n++){
-                new Trap().spawn(handler);
+                Trap t = new Trap();
+                traps.add(t);
+                t.spawn(handler);
             }
         }
         
@@ -574,6 +586,12 @@ public class TheEviscerator extends Boss{
             return (double)(delta/45000L)+1d;
         }
         
+        private void disarmTraps(){
+            traps.stream().forEach((trap) -> {
+                trap.hp = -1;
+            });
+        }
+        
         @Override
         public synchronized void actionPerformed(ActionEvent ae){
             super.actionPerformed(ae);
@@ -588,7 +606,7 @@ public class TheEviscerator extends Boss{
         private class Trap extends Buff{
 
             public Trap(){
-                super("Trap", 12, 12, 1, Decider.r.nextInt(3)+2);
+                super("Trap", 16, 16, 1, Decider.r.nextInt(3)+2);
             }
 
             @Override

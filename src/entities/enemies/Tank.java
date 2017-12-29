@@ -24,7 +24,7 @@ public class Tank extends Enemy{
     public double clock = 0;
     
     public Tank(int level, GameObject targ, Handler hand){
-        super("Tank", 40+40*level, 20+5*level, 80, 80, 5*level, level/2);
+        super("Tank", 40+40*level, 20+5*level, 80, 80, 4*level, (double)level/4.5d, 1.8, 115);
         target = targ;
         handler = hand;
     }
@@ -49,9 +49,12 @@ public class Tank extends Enemy{
     @Override
     public synchronized void actionPerformed(ActionEvent ae){
         super.actionPerformed(ae);
-        velTick();
-        if(r.nextInt(4)==0&&clock!=-1) clock += 0.25;
+        if(r.nextInt(4)==0&&clock!=-1){
+            clock += 0.25;
+            courseCorrection();
+        }
         if(clock>=16){
+            velTick();
             Tracker t = new Tracker(target, (int)(hp/20));
             t.x = x;
             t.y = y;
@@ -62,12 +65,11 @@ public class Tank extends Enemy{
 
     void velTick(){
         if(Math.abs(velx)<speed){
-            velx *= (r.nextDouble()+1) * Main.WIDTH/(Math.abs(target.x-x));
+            velx *= (r.nextDouble()+0.7);
         }
         if(Math.abs(vely)<speed){
-            vely *= (r.nextDouble()+1) * Main.HEIGHT/(Math.abs(target.y-y));
+            vely *= (r.nextDouble()+0.7);
         }
-        courseCorrection();
     }
     
     @Override

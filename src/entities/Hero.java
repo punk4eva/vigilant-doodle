@@ -36,6 +36,8 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     
     public int level = 1;
     public double speed = 3.0;
+    public final double MAXSPEED = 4.5;
+    private final double IMMUNITYLENGTH;
     public int xp = 0, maxxp = 5;
     private double regen = 0.01;
     public double invulnerability = 0;
@@ -115,14 +117,35 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         
     }
 
-    public Hero(Main main){
+    public Hero(Main main, String difficulty){
         super("Hero", 30, 48, 48);
+        switch(difficulty){
+            case "Easy":
+                regen = 0.025;
+                IMMUNITYLENGTH = 0.8;
+                damageMult = 1.1f;
+                damageAbsorption = 0.3;
+                break;
+            case "Normal":
+                regen = 0.015;
+                IMMUNITYLENGTH = 0.7;
+                damageAbsorption = 0.15;
+                break;
+            case "Hard":
+                regen = 0.01;
+                IMMUNITYLENGTH = 0.6;
+                break;
+            case "Brutal": default:
+                regen = 0.008;
+                IMMUNITYLENGTH = 0.5;
+                break;
+        }
         main.addKeyListener(this);
         main.addMouseListener(this);
         main.addMouseMotionListener(this);
         main.addMouseWheelListener(this);
         main.handler = new Handler(this);
-        main.decider = new Decider(main, 5500);
+        main.decider = new Decider(main, 6500);
         main.window = new Window(Main.WIDTH, Main.HEIGHT, "Supiru", main);
     }
     
@@ -136,6 +159,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
             maxhp+=8;
             hp+=8;
             speed *= 1.05;
+            if(speed>MAXSPEED) speed = MAXSPEED;
         }
     }
 
@@ -201,24 +225,24 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
             if(aimy<cy){ //1st Quartile
                 if(gradient<1.0){
                     sx = cx+36;
-                    sy = cy-(int)(gradient*36);
+                    sy = cy-(int)(gradient*36d);
                     vx = shootingMode.bullet.bulletSpeed;
                     vy = vx*-gradient;
                 }else{
                     sy = cy-36;
-                    sx = cx+(int)(36/gradient);
+                    sx = cx+(int)(36d/gradient);
                     vy = -shootingMode.bullet.bulletSpeed;
                     vx = vy/-gradient;
                 }
             }else{ //2nd Quartile
                 if(gradient<1.0){
                     sx = cx+36;
-                    sy = cy+(int)(gradient*36);
+                    sy = cy+(int)(gradient*36d);
                     vx = shootingMode.bullet.bulletSpeed;
                     vy = vx*gradient;
                 }else{
                     sy = cy+36;
-                    sx = cx+(int)(36/gradient);
+                    sx = cx+(int)(36d/gradient);
                     vy = shootingMode.bullet.bulletSpeed;
                     vx = vy/gradient;
                 }
@@ -227,24 +251,24 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
             if(aimy>cy){ //3rd Quartile
                 if(gradient<1.0){
                     sx = cx-36;
-                    sy = cy+(int)(gradient*36);
+                    sy = cy+(int)(gradient*36d);
                     vx = -shootingMode.bullet.bulletSpeed;
                     vy = vx*-gradient;
                 }else{
                     sy = cy+36;
-                    sx = cx-(int)(36/gradient);
+                    sx = cx-(int)(36d/gradient);
                     vy = shootingMode.bullet.bulletSpeed;
                     vx = vy/-gradient;
                 }
             }else{ //4th Quartile
                 if(gradient<1.0){
                     sx = cx-36;
-                    sy = cy-(int)(gradient*36);
+                    sy = cy-(int)(gradient*36d);
                     vx = -shootingMode.bullet.bulletSpeed;
                     vy = vx*gradient;
                 }else{
                     sy = cy-36;
-                    sx = cx-(int)(36/gradient);
+                    sx = cx-(int)(36d/gradient);
                     vy = -shootingMode.bullet.bulletSpeed;
                     vx = vy/gradient;
                 }
@@ -270,7 +294,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     public void hurt(double dam){
         if(invulnerability<=0){
             hp -= dam*(1-damageAbsorption);
-            invulnerability = 1;
+            invulnerability = IMMUNITYLENGTH;
         }
     }
     
@@ -430,7 +454,5 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         if(reloadStatus<10) reloadStatus+=shootingMode.bullet.reloadSpeed;
         if(weaponHeat>0) weaponHeat-=shootingMode.bullet.cooldownSpeed;
     }
-    
-    
-       
+      
 }

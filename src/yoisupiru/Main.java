@@ -20,8 +20,7 @@ public class Main extends Canvas implements Runnable{
     private Thread thread;
     private volatile boolean running = false, paused = false;
     public Window window;
-    
-    private static long frameNumber = 10000;
+    static double frameNumber = 10000;
     private static long frameDivisor = 10000;
     public static final int WIDTH, HEIGHT;
     public static final SoundHandler soundSystem = new SoundHandler();
@@ -40,22 +39,13 @@ public class Main extends Canvas implements Runnable{
     @Override
     public void run(){
         this.requestFocus();
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0;
-        double ns = 1000000000 / amountOfTicks;
-        double delta = 0;
         long timer = System.currentTimeMillis();
         int frames = 0;
         while(running){
             long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
-            lastTime = now;
             synchronized(soundSystem){ while(paused) try{
                 soundSystem.wait();
             }catch(InterruptedException e){}}
-            for(double d = delta; d >= 1; d--){
-                handler.tick();
-            }
             render(frames);
             frames++;
             if(System.currentTimeMillis() - timer > 1000){
@@ -76,10 +66,8 @@ public class Main extends Canvas implements Runnable{
         g = bs.getDrawGraphics();
         g.setColor(Color.black);
         g.fillRect(0, 0, WIDTH, HEIGHT);
-        if(frameInSec%16==0){
-            frameNumber = (frameNumber+1) % frameDivisor;
-        }
-        handler.render(g, frameNumber);
+        frameNumber %= frameDivisor;
+        handler.render(g, (long)frameNumber);
         g.dispose();
         bs.show();
     }
@@ -107,6 +95,10 @@ public class Main extends Canvas implements Runnable{
         if(!paused) synchronized(soundSystem){
             soundSystem.notify();
         }
+    }
+
+    String getDifficulty(){
+        return "Normal";
     }
 
 }
