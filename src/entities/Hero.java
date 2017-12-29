@@ -39,7 +39,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     public final double MAXSPEED = 4.5;
     private final double IMMUNITYLENGTH;
     public int xp = 0, maxxp = 5;
-    private double regen = 0.01;
+    public double regen = 0.01;
     public double invulnerability = 0;
     private boolean meleeMode = false;
     public ShootingMode shootingMode = ShootingMode.CONSTANT;
@@ -49,6 +49,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     private double weaponHeat = 0;
     public double damageAbsorption = 0;
     public float damageMult = 1;
+    public double coolingMult = 1;
     private LinkedList<Integer> currentKeys = new LinkedList<>();
     private double aimx=-1, aimy=-1;
     private final List<Buff> buffs = new LinkedList<>();
@@ -117,9 +118,16 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         
     }
 
-    public Hero(Main main, String difficulty){
+    public Hero(Main main){
         super("Hero", 30, 48, 48);
-        switch(difficulty){
+        main.addKeyListener(this);
+        main.addMouseListener(this);
+        main.addMouseMotionListener(this);
+        main.addMouseWheelListener(this);
+        main.handler = new Handler(this);
+        main.decider = new Decider(main, 6500);
+        main.window = new Window(Main.WIDTH, Main.HEIGHT, "Supiru", main);
+        switch(main.getDifficulty()){
             case "Easy":
                 regen = 0.025;
                 IMMUNITYLENGTH = 0.8;
@@ -140,13 +148,6 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
                 IMMUNITYLENGTH = 0.5;
                 break;
         }
-        main.addKeyListener(this);
-        main.addMouseListener(this);
-        main.addMouseMotionListener(this);
-        main.addMouseWheelListener(this);
-        main.handler = new Handler(this);
-        main.decider = new Decider(main, 6500);
-        main.window = new Window(Main.WIDTH, Main.HEIGHT, "Supiru", main);
     }
     
     public void tryLevelUp(int exp){
@@ -220,7 +221,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         int cx = x+width/2, cy = y+height/2;
         double vx, vy;
         int sx, sy;
-        double gradient = Math.abs((aimy-cy)/(aimx-cx));
+        double gradient = Math.abs((aimy-(double)cy)/(aimx-(double)cx));
         if(aimx>cx){
             if(aimy<cy){ //1st Quartile
                 if(gradient<1.0){
@@ -377,6 +378,12 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         regen += r;
     }
     
+    public void setRegen(double r){regen = r;}
+    
+    public void setCoolingMult(double m){
+        coolingMult = m;
+    }
+    
     public void multDmgMultiplier(float m){
         damageMult *= m;
     }
@@ -452,7 +459,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     
     private void tickWeapon(){
         if(reloadStatus<10) reloadStatus+=shootingMode.bullet.reloadSpeed;
-        if(weaponHeat>0) weaponHeat-=shootingMode.bullet.cooldownSpeed;
+        if(weaponHeat>0) weaponHeat-=shootingMode.bullet.cooldownSpeed*coolingMult;
     }
       
 }

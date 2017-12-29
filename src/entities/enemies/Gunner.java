@@ -19,7 +19,7 @@ import yoisupiru.Handler;
 public class Gunner extends Shooter{
     
     public Gunner(int level, GameObject targ, Handler hand){
-        super("Gunner", 15*(level+1), level, 48, 48, 3*level, 2.75+0.25*(double)level, targ, hand, 5.5, 21);
+        super("Gunner", 15*(level+1), level, 48, 48, 3, 2.75+0.25*(double)level, targ, hand, 5.5, 21);
         bullet = new Bullet(8+level, 3+2*level, -1, -1, -1);
     }
     

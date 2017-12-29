@@ -25,7 +25,7 @@ public class Shooter extends Enemy{
     public double clock = 0;
 
     public Shooter(int level, GameObject targ, Handler hand){
-        super("Shooter", 12+12*level, 0, 48, 48, 2*level, level*2, 4.5, 0);
+        super("Shooter", 12+12*level, 0, 48, 48, 2, level*2, 4.5, 0);
         target = targ;
         handler = hand;
         int bd = 5+4*level;
@@ -83,7 +83,7 @@ public class Shooter extends Enemy{
     void shoot(){
         int cx = x+width/2, cy = y+height/2;
         double vx, vy, dx = target.x+target.width/2, dy = target.y+target.height/2, sx, sy;
-        double gradient = Math.abs(((double)dy-cy)/(dx-cx));
+        double gradient = Math.abs((dy-(double)cy)/(dx-(double)cx));
         if(dx>cx){
             if(dy<cy){ //1st Quartile
                 if(gradient<1.0){

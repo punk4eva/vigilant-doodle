@@ -21,7 +21,7 @@ public class Tracker extends Enemy{
     }
     
     public Tracker(GameObject targ, int level){
-        super("Tracker", 10+10*level, 4+2*level, 32, 32, level, level*1.5, 7.0, Integer.MAX_VALUE);
+        super("Tracker", 10+10*level, 4+2*level, 32, 32, 1, level*1.5, 7.0, Integer.MAX_VALUE);
         target = targ;
     }
 

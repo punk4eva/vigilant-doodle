@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import static logic.Collision.r;
 import yoisupiru.Handler;
-import yoisupiru.Main;
 
 /**
  *
@@ -24,7 +23,7 @@ public class Tank extends Enemy{
     public double clock = 0;
     
     public Tank(int level, GameObject targ, Handler hand){
-        super("Tank", 40+40*level, 20+5*level, 80, 80, 4*level, (double)level/4.5d, 1.8, 115);
+        super("Tank", 40+40*level, 20+5*level, 80, 80, 4, (double)level/4.5d, 1.8, 115);
         target = targ;
         handler = hand;
     }

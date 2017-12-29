@@ -191,6 +191,36 @@ public abstract class Buff extends Consumable{
         
     }
     
+    public static class FireDebuff extends Buff{
+        
+        double prevRegen, prevMult;
+        
+        public FireDebuff(int w, int h, int lv, long t){
+            super("On Fire", w, h, t, lv);
+        }
+
+        @Override
+        public void start(Hero h){
+            prevRegen = h.regen;
+            prevMult = h.coolingMult;
+            h.setRegen(0);
+            h.setCoolingMult(0.5);
+        }
+
+        @Override
+        public void end(Hero h){
+            h.setRegen(prevRegen);
+            h.setCoolingMult(prevMult);
+        }
+
+        @Override
+        public void render(Graphics g, long frameNum){
+            g.setColor(new Color((int)(lvl*80), (int)(frameNum%40), 40));
+            g.fillRect(x, y, width, height);
+        }
+        
+    }
+    
     public static class HpUpgrade extends Buff{
         
         public HpUpgrade(int lv){

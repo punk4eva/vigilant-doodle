@@ -82,6 +82,9 @@ public class Handler implements ActionListener{
             if(ob instanceof Boss) Main.decider.bossSlain();
         }else if(ob instanceof Hero){
             System.out.println("You died on level " + hero.level + "!");
+            try{
+                Thread.sleep(1400);
+            }catch(InterruptedException e){}
             System.exit(0);
         }else if(ob instanceof Consumable && !((Consumable)ob).forced) consNum--;
     }
