@@ -69,4 +69,10 @@ public abstract class Collision{
         vely = vy;
     }
     
+    public void velAngleChange(double r){
+        double vx = velx;
+        velx = Math.cos(r)*velx-Math.sin(r)*vely;
+        vely = Math.sin(r)*vx+Math.cos(r)*vely;
+    }
+    
 }

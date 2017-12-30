@@ -29,7 +29,7 @@ import yoisupiru.Main;
 public class TheEviscerator extends Boss{
     
     public TheEviscerator(Handler h, GameObject targ, int hp1, int hp2, int hp3){
-        super("The Eviscerator", hp1+hp2+hp3, 25, "The_Eviscerator.wav", 
+        super("The Eviscerator", hp1+hp2+hp3, 20, "The_Eviscerator.wav", 
                 new Phase1(targ, 26, 6), new Phase2(h, targ,hp3+hp2,hp2),
                 new Phase3(h, targ, hp3, 27, 7));
         ((Phase2)phases[1]).instance = this;
@@ -69,6 +69,7 @@ public class TheEviscerator extends Boss{
         @Override
         public void render(Graphics ig, long frameNum){
             Graphics2D g = (Graphics2D)ig;
+            Color col = new Color(32, (int)(frameNum%233), 50);
             
             g.setColor(new Color(33, 229, 22));
             g.fillOval(x, y, width, height);
@@ -78,7 +79,7 @@ public class TheEviscerator extends Boss{
             AffineTransform at1, at2, a45 = AffineTransform.getRotateInstance(Math.PI/4.0, x+width/2, y+height/2);
             double r1 = -((double)frameNum/2)%(2*Math.PI), r2 = ((double)frameNum/2)%(2*Math.PI);
             
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             Rectangle rect = new Rectangle(x+width/2-16, y-16, 32, 32);
             at1 = AffineTransform.getRotateInstance(r1, rect.x+16, rect.y+16);
             g.fill(at1.createTransformedShape(rect));
@@ -87,7 +88,7 @@ public class TheEviscerator extends Boss{
             rect = new Rectangle(rect.x+10, rect.y+10, rect.width-20, rect.height-20);
             g.fill(at1.createTransformedShape(rect));
             
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             rect = new Rectangle(x+width/2-16, y+height-16, 32, 32);
             at1 = AffineTransform.getRotateInstance(r1, rect.x+16, rect.y+16);
             g.fill(at1.createTransformedShape(rect));
@@ -96,7 +97,7 @@ public class TheEviscerator extends Boss{
             rect = new Rectangle(rect.x+10, rect.y+10, rect.width-20, rect.height-20);
             g.fill(at1.createTransformedShape(rect));
             
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             rect = new Rectangle(x-16, y+height/2-16, 32, 32);
             at2 = AffineTransform.getRotateInstance(r2, rect.x+16, rect.y+16);
             g.fill(at2.createTransformedShape(rect));
@@ -105,7 +106,7 @@ public class TheEviscerator extends Boss{
             rect = new Rectangle(rect.x+10, rect.y+10, rect.width-20, rect.height-20);
             g.fill(at2.createTransformedShape(rect));
             
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             rect = new Rectangle(x+width-16, y+height/2-16, 32, 32);
             at2 = AffineTransform.getRotateInstance(r2, rect.x+16, rect.y+16);
             g.fill(at2.createTransformedShape(rect));
@@ -486,13 +487,14 @@ public class TheEviscerator extends Boss{
         public void render(Graphics ig, long frameNum){
             Graphics2D g = (Graphics2D)ig;
             
+            Color col = new Color(32, (int)(frameNum%233), 50);
             g.setColor(new Color(33, 229, 22));
             g.fillOval(x, y, width, height);
             g.setColor(Color.black);
             g.fillOval(x+8, y+8, 134, 134);
             
             AffineTransform aMid = AffineTransform.getRotateInstance(((double)frameNum/3)%(2*Math.PI), x+width/2, y+height/2);
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             Rectangle rect = new Rectangle(x+width/2-16, y-16, 40, 40);
             AffineTransform a45 = AffineTransform.getRotateInstance(Math.PI/4d, rect.x+16, rect.y+16);
             a45.concatenate(aMid);
@@ -502,7 +504,7 @@ public class TheEviscerator extends Boss{
             rect = new Rectangle(rect.x+10, rect.y+10, rect.width-20, rect.height-20);
             g.fill(a45.createTransformedShape(rect));
             
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             rect = new Rectangle(x+width/2-16, y+height-16, 40, 40);
             a45 = AffineTransform.getRotateInstance(Math.PI/4d, rect.x+16, rect.y+16);
             a45.concatenate(aMid);
@@ -512,7 +514,7 @@ public class TheEviscerator extends Boss{
             rect = new Rectangle(rect.x+10, rect.y+10, rect.width-20, rect.height-20);
             g.fill(a45.createTransformedShape(rect));
             
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             rect = new Rectangle(x-16, y+height/2-16, 40, 40);
             a45 = AffineTransform.getRotateInstance(Math.PI/4d, rect.x+16, rect.y+16);
             a45.concatenate(aMid);
@@ -522,7 +524,7 @@ public class TheEviscerator extends Boss{
             rect = new Rectangle(rect.x+10, rect.y+10, rect.width-20, rect.height-20);
             g.fill(a45.createTransformedShape(rect));
             
-            g.setColor(new Color(32, (int)(frameNum%233), 50));
+            g.setColor(col);
             rect = new Rectangle(x+width-16, y+height/2-16, 40, 40);
             a45 = AffineTransform.getRotateInstance(Math.PI/4d, rect.x+16, rect.y+16);
             a45.concatenate(aMid);

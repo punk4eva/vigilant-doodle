@@ -24,7 +24,7 @@ public abstract class Enemy extends GameObject{
     @Override
     public void collision(GameObject ob){
         if(ob instanceof Hero){
-            ((Hero) ob).hurt(damage);
+            ob.hurt(damage);
         }
     }
     

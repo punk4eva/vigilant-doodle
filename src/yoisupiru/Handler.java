@@ -1,6 +1,7 @@
 
 package yoisupiru;
 
+import entities.Bullet;
 import entities.Consumable;
 import entities.Enemy;
 import entities.GameObject;
@@ -13,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 import javax.swing.Timer;
 
 /**
@@ -78,7 +80,7 @@ public class Handler implements ActionListener{
             if(hero.level!=l){
                 Main.decider.levelChange(hero.level);
                 Main.soundSystem.playSFX("levelUp.wav");
-            }else Main.soundSystem.playSFX("Death.wav");
+            }else if(((Enemy) ob).xp!=0) Main.soundSystem.playSFX("Death.wav");
             if(ob instanceof Boss) Main.decider.bossSlain();
         }else if(ob instanceof Hero){
             System.out.println("You died on level " + hero.level + "!");
@@ -95,12 +97,20 @@ public class Handler implements ActionListener{
                 o.render(g, frameNum);
             });
         }
+        hero.drawMessages(g);
     }
     
     private void collisionDetection(GameObject ob){
         objects.stream().filter(o -> ob.isColliding(o)).forEach(o -> {
             ob.collision(o);
         });
+    }
+    
+    public Bullet getBullet(){
+        synchronized(objects){
+            List<Bullet> list = (List<Bullet>)(Object)objects.stream().filter(ob -> ob instanceof Bullet).collect(Collectors.toList());
+            return list.isEmpty()?null:list.get(0);
+        }
     }
 
     @Override

@@ -197,6 +197,7 @@ public abstract class Buff extends Consumable{
         
         public FireDebuff(int w, int h, int lv, long t){
             super("On Fire", w, h, t, lv);
+            buffSound = null;
         }
 
         @Override
@@ -204,7 +205,7 @@ public abstract class Buff extends Consumable{
             prevRegen = h.regen;
             prevMult = h.coolingMult;
             h.setRegen(0);
-            h.setCoolingMult(0.5);
+            h.setCoolingMult(1.0-(lvl/5));
         }
 
         @Override

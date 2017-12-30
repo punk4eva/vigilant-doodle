@@ -4,15 +4,11 @@ package yoisupiru;
 import entities.Consumable;
 import entities.Enemy;
 import entities.Hero.ShootingMode;
-import entities.bosses.Boss;
-import entities.bosses.TheEviscerator;
+import entities.bosses.*;
 import entities.consumables.WeaponUpgrade.*;
 import entities.consumables.Buff;
 import entities.consumables.Buff.*;
-import entities.enemies.Gunner;
-import entities.enemies.Shooter;
-import entities.enemies.Tank;
-import entities.enemies.Tracker;
+import entities.enemies.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -85,6 +81,11 @@ public class Decider implements ActionListener, KeyListener{
             boss = true;
             handler.clearEnemies();
         }
+        if(t instanceof TheIncinerator){
+            t.x = 0;
+            t.y = 0;
+            ((TheIncinerator) t).spawnFuelTank();
+        }
         handler.addObject(t);
     }
     
@@ -95,7 +96,9 @@ public class Decider implements ActionListener, KeyListener{
             case "Gunner": return new Gunner(level, handler.hero, handler);
             case "Tank": return new Tank(level, handler.hero, handler);
             case "Eviscerator": return new TheEviscerator(handler, handler.hero, 400, 800, 500);
+            case "Incinerator": return new TheIncinerator(handler, handler.hero, 2000, 2000);
             default: if(level==4) return new TheEviscerator(handler, handler.hero, 400, 800, 500);
+                if(level==8) return new TheIncinerator(handler, handler.hero, 2000, 2000);
                 if(r.nextInt(2+level)<level){
                     if(level<3||r.nextInt(4+level)>level) return new Shooter(level, handler.hero, handler);
                     else return new Gunner(level, handler.hero, handler);
@@ -169,6 +172,7 @@ public class Decider implements ActionListener, KeyListener{
             case '3': mode = "Gunner"; break;
             case '4': mode = "Tank"; break;
             case '5': mode = "Eviscerator"; break;
+            case '6': mode = "Incinerator"; break;
             case 'o': Window.increaseVolume(); break;
             case 'l': Window.decreaseVolume(); break;
         }

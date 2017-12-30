@@ -5,6 +5,7 @@ import entities.Enemy;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import logic.Collision;
 import yoisupiru.Handler;
 import yoisupiru.Main;
 
@@ -49,7 +50,13 @@ public class Boss extends Enemy{
             height = phases[phaseNum].height;
             phases[phaseNum].y = y;
             phases[phaseNum].x = x;
+            damage = phases[phaseNum].damage;
         }
+    }
+    
+    @Override
+    public boolean isColliding(Collision c){
+        return phases[phaseNum].isColliding(c);
     }
     
     @Override

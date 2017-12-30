@@ -174,7 +174,6 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     @Override
     public void render(Graphics g, long frameNum){
         Graphics2D g2d = (Graphics2D)g;
-        drawMessages(g2d);
         g2d.setColor(getHealthColor());
         g2d.fillRect(x, y, 48, 48);
         g2d.setColor(Color.black);
@@ -304,11 +303,11 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     public void addBuff(Buff b){
-        synchronized(buffs){
+        if(!(isOnFire()&&b.name.startsWith("On Fire")))synchronized(buffs){
             buffs.add(b);
             b.startTime();
             b.start(this);
-            Main.soundSystem.playSFX(b.buffSound);
+            if(b.buffSound!=null) Main.soundSystem.playSFX(b.buffSound);
         }
     }
     
@@ -316,6 +315,12 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         synchronized(buffs){
             buffs.remove(b);
             b.end(this);
+        }
+    }
+    
+    public boolean isOnFire(){
+        synchronized(buffs){
+            return buffs.stream().anyMatch(b -> b.name.startsWith("On Fire"));
         }
     }
     
@@ -338,9 +343,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     public void boostInvulnerability(double i){
-        System.out.println(invulnerability);
         invulnerability += i;
-        System.out.println(invulnerability);
     }
     
     public void boostSpeed(double sp){

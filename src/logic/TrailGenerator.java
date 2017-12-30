@@ -3,7 +3,6 @@ package logic;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -40,6 +39,12 @@ public class TrailGenerator{
         G = v[5];
         B = v[6];
         fadespeed = f;
+    }
+    
+    public void setColor(Color c){
+        R = c.getRed();
+        G = c.getGreen();
+        B = c.getBlue();
     }
 
     private class Trail{
