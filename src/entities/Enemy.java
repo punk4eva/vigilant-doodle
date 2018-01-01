@@ -11,6 +11,7 @@ public abstract class Enemy extends GameObject{
     public double damage;
     public double speed;
     public final double MAXSPEED, MAXDAMAGE;
+    public boolean forced = false;
 
     public Enemy(String na, double health, double dam, int w, int h, int x, double sp, double ms, double md){
         super(na, health, w, h);

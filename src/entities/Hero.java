@@ -119,7 +119,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
 
     public Hero(Main main){
-        super("Hero", 30, 48, 48);
+        super("Hero", 1030, 48, 48);
         main.addKeyListener(this);
         main.addMouseListener(this);
         main.addMouseMotionListener(this);
@@ -189,16 +189,16 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         g.setColor(Color.yellow);
         g.drawString(shootingMode.name() + (shootingMode.level==0 ? "" : " +" + shootingMode.level), 8, 18);
         int n = 38;
-        for(Buff b : buffs){
+        synchronized(buffs){ for(Buff b : buffs){
             g.drawString(b.name, 8, n);
             n+=20;
-        }
+        }}
         g.setColor(Color.CYAN);
         n = Main.HEIGHT-58;
-        for(Usable u : usables){
+        synchronized(usables){ for(Usable u : usables){
             g.drawString(u.name, 8, n);
             n-=20;
-        }
+        }}
     }
     
     private Color getHealthColor(){

@@ -17,16 +17,17 @@ import yoisupiru.Decider;
  */
 public class Fire extends Enemy{
 
-    private final LinkedList<Particle> particles = new LinkedList<>();
-    private double torque;
-    private final int length, duration, intensity;
-    private int clock = 0, fireLevel;
+    protected final LinkedList<Particle> particles = new LinkedList<>();
+    protected double torque;
+    protected final int duration, intensity;
+    protected int clock = 0, fireLevel, length;
 
 
     public Fire(double dam, int lvl, int _x, int _y, double vx, double vy, double to, int len, int dur, int in){
         super("Fire", 1, dam, -1, -1, 0, 7.0, Integer.MAX_VALUE, Integer.MAX_VALUE);
         velx = vx;
         vely = vy;
+        forced = true;
         fireLevel = lvl;
         torque = to;
         length = len;
@@ -93,18 +94,22 @@ public class Fire extends Enemy{
         }
     }
 
-    private double[] getRandVelocity(){
+    protected double[] getRandVelocity(){
         double to = (Decider.r.nextDouble()*2*torque)-torque,
             vx = Math.cos(to)*velx-Math.sin(to)*vely,
             vy = Math.sin(to)*velx+Math.cos(to)*vely;
         return new double[]{vx, vy, -to};
     }
 
-    private static class Particle extends GameObject{
+    public void setLength(int i){
+        length = i;
+    }
 
-        private double ttl;
-        private final double max, torque, tInc;
-        private final TrailGenerator trail;
+    protected static class Particle extends GameObject{
+
+        protected double ttl;
+        protected final double max, torque, tInc;
+        protected TrailGenerator trail;
 
         public Particle(int t, int _x, int _y, double vx, double vy, double to){
             super("Fire", 1, 8, 8);
@@ -143,6 +148,51 @@ public class Fire extends Enemy{
             super.actionPerformed(ae);
         }
 
+    }
+    
+    public static class LowLagFire extends Fire{
+    
+        public LowLagFire(double dam, int lvl, int _x, int _y, double vx, double vy, double to, int len, int dur, int in){
+            super(dam, lvl, _x, _y, vx, vy, to, len, dur, in);
+        }
+    
+        @Override
+        public void actionPerformed(ActionEvent ae){
+            clock++;
+            synchronized(particles){
+                particles.stream().forEach(p -> p.actionPerformed(ae));
+            }
+            if(clock>=intensity){
+                clock = 0;
+                double[] vector = getRandVelocity();
+                synchronized(particles){
+                    particles.add(new LowLagParticle(length, x, y, vector[0], vector[1], vector[2]));
+                }
+            }
+        }
+        
+        protected static class LowLagParticle extends Particle{
+        
+            public LowLagParticle(int t, int _x, int _y, double vx, double vy, double to){
+                super(t, _x, _y, vx, vy, to);
+                //trail = new TrailGenerator(5, 4, 10, width, height, -1, -1, -1);
+            }
+            
+            @Override
+            public void render(Graphics g, long frameNum){
+                ttl--;
+                if(ttl<=0) alive = false;
+                else{
+                    int b = (int)(1000d*ttl/max-754d),
+                            gr = (int)(700d*ttl/max-454d);
+                    Color col = new Color(246, gr<0?0:gr, b<0?0:b);
+                    g.setColor(col);
+                    g.fillRect(x, y, width, height);
+                }
+            }
+        
+        }
+        
     }
 
 }

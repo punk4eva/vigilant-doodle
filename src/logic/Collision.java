@@ -2,7 +2,7 @@
 package logic;
 
 import entities.GameObject;
-import java.util.Random;
+import static yoisupiru.Decider.r;
 
 /**
  *
@@ -16,7 +16,6 @@ public abstract class Collision{
     public double xChange, yChange;
     public double velx, vely;
     public int width, height;
-    public static final Random r = new Random();
     
     public Collision(){
         ID = IDBuilder.genID();
@@ -38,21 +37,11 @@ public abstract class Collision{
     public void updateBothVelocities(Collision c){
         if(c.IDOfRitchocket == ID) return;
         double nvx = velx, nvy = vely;
-        if(c.velx*velx>0){
-            velx = r.nextDouble()*c.velx;
-            nvx = (c.velx+nvx) - velx;
-        }else{
-            velx += r.nextDouble()*c.velx;
-            nvx = (c.velx+nvx) - velx;
-        }
-        if(c.vely*vely>0){
-            vely = r.nextDouble()*c.vely;
-            nvy = (c.vely+nvy) - vely;
-        }else{
-            vely += r.nextDouble()*c.vely;
-            nvy = (c.vely+nvy) - vely;
-        }
-        c.velChange(nvx, nvy);
+        if(c.velx*velx>0) velx = r.nextDouble()*c.velx;
+        else velx += r.nextDouble()*c.velx;
+        if(c.vely*vely>0) vely = r.nextDouble()*c.vely;
+        else vely += r.nextDouble()*c.vely;
+        c.velChange((c.velx+nvx) - velx, (c.vely+nvy) - vely);
         c.IDOfRitchocket = ID;
         IDOfRitchocket = c.ID;
     }

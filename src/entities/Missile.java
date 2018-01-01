@@ -39,10 +39,12 @@ public class Missile extends Bullet{
     }
     
     @Override
-    public void collision(GameObject ob){
-        if(ob instanceof Bullet){
-            if(!(ob instanceof Missile)) updateOtherVelocity(ob);
-        }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
+    public void collision(GameObject ob) {
+        if (ob instanceof Bullet) {
+            if (!(ob instanceof Missile)) {
+                updateOtherVelocity(ob);
+            }
+        } else if (!(ob instanceof Consumable) && !(ob instanceof Boss && ((Boss) ob).flythroughMode)) {
             hp = -1;
             ob.hp -= damage;
         }

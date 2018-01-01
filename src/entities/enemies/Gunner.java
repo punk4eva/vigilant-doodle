@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
-import static logic.Collision.r;
+import yoisupiru.Decider;
 import yoisupiru.Handler;
 
 /**
@@ -49,7 +49,7 @@ public class Gunner extends Shooter{
     public synchronized void actionPerformed(ActionEvent ae){
         move();
         velTick();
-        if(r.nextInt(4)==0) clock += 0.2;
+        if(Decider.r.nextInt(4)==0) clock += 0.2;
         if(clock>=1&&clock!=-1){
             shoot();
             clock = 0;

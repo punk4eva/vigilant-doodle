@@ -139,15 +139,15 @@ public abstract class Usable extends Consumable{
                 super(7, dam, -1, -1, -1);
             }
             
-            @Override
+            /*@Override
             public void collision(GameObject ob){
-                if(ob instanceof Bullet){
-                    if(!(ob instanceof Missile)) updateOtherVelocity(ob);
-                }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)&&!(ob instanceof Hero)){
-                    hp = -1;
-                    ob.hp -= damage;
-                }
+            if(ob instanceof Bullet){
+            if(!(ob instanceof Missile)) updateOtherVelocity(ob);
+            }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)&&!(ob instanceof Hero)){
+            hp = -1;
+            ob.hp -= damage;
             }
+            }*/
             
             void courseCorrection(){
                 if(target==null) return;

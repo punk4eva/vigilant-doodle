@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
+import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
 
@@ -20,7 +21,7 @@ import yoisupiru.Main;
 public class Shooter extends Enemy{
     
     public GameObject target;
-    private final Handler handler;
+    final Handler handler;
     public Bullet bullet;
     public double clock = 0;
 
@@ -32,7 +33,7 @@ public class Shooter extends Enemy{
         bullet = new Bullet(4+level, bd<45?bd:45, -1, -1, -1);
     }
     
-    protected Shooter(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand, double ms, double md){
+    protected Shooter(String name, double health, double damage, int w, int h, int xp, double sp, GameObject targ, Handler hand, double ms, double md){
         super(name, health, damage, w, h, xp, sp, ms, md);
         target = targ;
         handler = hand;
@@ -56,7 +57,7 @@ public class Shooter extends Enemy{
     public synchronized void actionPerformed(ActionEvent ae){
         super.actionPerformed(ae);
         velTick();
-        if(r.nextInt(4)==0&&clock!=-1) clock += 0.25;
+        if(Decider.r.nextInt(4)==0&&clock!=-1) clock += 0.25;
         if(clock>=4){
             shoot();
             clock = 0;
@@ -65,10 +66,10 @@ public class Shooter extends Enemy{
 
     void velTick(){
         if(Math.abs(velx)<speed){
-            velx *= r.nextDouble() * 3 * (Math.abs(target.x-x))/Main.WIDTH;
+            velx *= Decider.r.nextDouble() * 3 * (Math.abs(target.x-x))/Main.WIDTH;
         }
         if(Math.abs(vely)<speed){
-            vely *= r.nextDouble() * 3 * (Math.abs(target.y-y))/Main.HEIGHT;
+            vely *= Decider.r.nextDouble() * 3 * (Math.abs(target.y-y))/Main.HEIGHT;
         }
         courseCorrection();
     }

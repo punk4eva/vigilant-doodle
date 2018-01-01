@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
-import static logic.Collision.r;
+import yoisupiru.Decider;
 import yoisupiru.Handler;
 
 /**
@@ -48,7 +48,7 @@ public class Tank extends Enemy{
     @Override
     public synchronized void actionPerformed(ActionEvent ae){
         super.actionPerformed(ae);
-        if(r.nextInt(4)==0&&clock!=-1){
+        if(Decider.r.nextInt(4)==0&&clock!=-1){
             clock += 0.25;
             courseCorrection();
         }
@@ -64,10 +64,10 @@ public class Tank extends Enemy{
 
     void velTick(){
         if(Math.abs(velx)<speed){
-            velx *= (r.nextDouble()+0.7);
+            velx *= (Decider.r.nextDouble()+0.7);
         }
         if(Math.abs(vely)<speed){
-            vely *= (r.nextDouble()+0.7);
+            vely *= (Decider.r.nextDouble()+0.7);
         }
     }
     

@@ -24,15 +24,15 @@ public class Tracker extends Enemy{
         super("Tracker", 10+10*level, 4+2*level, 32, 32, 1, level*1.5, 7.0, Integer.MAX_VALUE);
         target = targ;
     }
+    
+    protected Tracker(String name, double health, double damage, int w, int h, int xp, double sp, GameObject targ, double ms, double md){
+        super(name, health, damage, w, h, xp, sp, ms, md);
+        target = targ;
+    }
 
     @Override
     public void render(Graphics g, long frameNum){
-        int col = (int)(((double)hp/maxhp)*254.5);
-        try{
-            g.setColor(new Color(col, (int)(frameNum%256), col));
-        }catch(Exception e){
-            g.setColor(new Color(128, 64, 156));
-        }
+        g.setColor(getColor(frameNum));
         g.fillRect(x, y, width, height);
         g.setColor(Color.black);
         g.fillRect(x+8, y+8, 16, 16);
@@ -44,7 +44,7 @@ public class Tracker extends Enemy{
         courseCorrection();
     }
     
-    void courseCorrection(){
+    protected void courseCorrection(){
         double dx = target.x+target.width/2, dy = target.y+target.height/2;
         if(dy<y&&vely>-speed){
             if(vely-0.1<-speed){
@@ -64,6 +64,11 @@ public class Tracker extends Enemy{
                 velx = speed;
             }else velx += 0.1;
         }
+    }
+    
+    protected Color getColor(long frameNum){
+        int col = (int)((hp/maxhp)*250d);
+        return new Color(col>0?col:0, (int)(frameNum%256), col>0?col:0);
     }
     
 }

@@ -84,7 +84,7 @@ public class Decider implements ActionListener, KeyListener{
         if(t instanceof TheIncinerator){
             t.x = 0;
             t.y = 0;
-            ((TheIncinerator) t).spawnFuelTank();
+            ((TheIncinerator) t).spawnFuelTank(handler);
         }
         handler.addObject(t);
     }
@@ -104,7 +104,8 @@ public class Decider implements ActionListener, KeyListener{
                     else return new Gunner(level, handler.hero, handler);
                 }else{
                     if(level<5||r.nextInt(6+level)>level) return new Tracker(handler.hero, level);
-                    else return new Tank(level, handler.hero, handler);
+                    else if(level<7||r.nextInt(6+level)>level) return new Tank(level, handler.hero, handler);
+                    else return new Grenadier(level, handler.hero, handler);
                 }
         }
     }

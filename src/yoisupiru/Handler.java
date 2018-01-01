@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 
@@ -45,14 +46,14 @@ public class Handler implements ActionListener{
     public void addObject(GameObject ob){
         queuedEvents.add(() -> {
             if(ob instanceof Enemy){
-                if(mobNum<MOBCAP) synchronized(objects){
-                    mobNum++;
+                if(mobNum<MOBCAP||((Enemy)ob).forced) synchronized(objects){
+                    if(!((Enemy)ob).forced) mobNum++;
                     timer.addActionListener(ob);
                     objects.add(ob);
                 }
             }else if(ob instanceof Consumable){
                 if(consNum<CONSCAP||((Consumable)ob).forced) synchronized(objects){
-                    consNum++;
+                    if(!((Consumable)ob).forced) consNum++;
                     timer.addActionListener(ob);
                     objects.add(ob);
                 }
@@ -112,6 +113,12 @@ public class Handler implements ActionListener{
             return list.isEmpty()?null:list.get(0);
         }
     }
+    
+    public boolean checkIfExists(Predicate<GameObject> pred){
+        synchronized(objects){
+            return objects.stream().anyMatch(pred);
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent ae){
@@ -140,6 +147,20 @@ public class Handler implements ActionListener{
                         timer.removeActionListener(ob);
                         iter.remove();
                         mobNum--;
+                    }
+                }
+            }
+        });
+    }
+
+    public void purge(int y){
+        queuedEvents.add(() -> {
+            synchronized(objects){
+                for(Iterator<GameObject> iter=objects.iterator();iter.hasNext();){
+                    GameObject ob = iter.next();
+                    if(ob.y<y && ob instanceof Hero || ob instanceof Bullet){
+                        timer.removeActionListener(ob);
+                        iter.remove();
                     }
                 }
             }

@@ -23,6 +23,7 @@ public class Boss extends Enemy{
     
     public Boss(String na, double health, int x, String bgp_, BossPhase... ph){
         super(na, health, ph[0].damage, ph[0].width, ph[0].height, x, ph[0].speed, -1, -1);
+        forced = true;
         bgp = bgp_;
         phases = ph;
         speed = ph[0].speed;
@@ -44,6 +45,7 @@ public class Boss extends Enemy{
             }
         }else if(hp<=phases[phaseNum+1].triggerHealth){
             phaseNum++;
+            nextPhase(phaseNum, handler);
             flythroughMode = phases[phaseNum].flyThrough;
             hp = phases[phaseNum].triggerHealth;
             width = phases[phaseNum].width;
@@ -65,6 +67,8 @@ public class Boss extends Enemy{
         x = phases[phaseNum].x;
         y = phases[phaseNum].y;
     }
+
+    protected void nextPhase(int phaseNum, Handler handler){}
     
     protected abstract class BossPhase extends Enemy{
 

@@ -329,15 +329,15 @@ public class TheEviscerator extends Boss{
         }
         
         private void changeDirection(){
-            velx = r.nextDouble()*2-1;
-            vely = r.nextDouble()*2-1;
+            velx = Decider.r.nextDouble()*2-1;
+            vely = Decider.r.nextDouble()*2-1;
         }
         
         private void isNearEdge(){
-            if(x<50) velx = r.nextDouble();
-            else if(x+width>Main.WIDTH-50) velx = -r.nextDouble();
-            if(y<50) vely = r.nextDouble();
-            else if(y+height>Main.HEIGHT-50) vely = -r.nextDouble();
+            if(x<50) velx = Decider.r.nextDouble();
+            else if(x+width>Main.WIDTH-50) velx = -Decider.r.nextDouble();
+            if(y<50) vely = Decider.r.nextDouble();
+            else if(y+height>Main.HEIGHT-50) vely = -Decider.r.nextDouble();
         }
         
         void spawnTracker(){
@@ -426,6 +426,7 @@ public class TheEviscerator extends Boss{
             public Minion(int mN){
                 super("Evisceration Machine", Phase2.this.healthPerMinion, mN, 48, 48, 0, 2.75+0.25*mN, Phase2.this.target, Phase2.this.handler, 10000, 10000);
                 minionNum = mN;
+                forced = true;
                 x = Phase2.this.x;
                 y = Phase2.this.y;
                 bullet = new Bullet(8+mN, 3+5*mN, -1, -1, -1);
