@@ -53,7 +53,6 @@ public class TheIncinerator extends Boss{
     
     @Override
     public void drop(Handler hand){
-        ((Phase2) phases[1]).wall.deactivate();
         Usable u;
         switch(Decider.r.nextInt(3)){
             case 0: u = new Usable.HealingPotion(8); break;
@@ -422,11 +421,12 @@ public class TheIncinerator extends Boss{
         
         private class WallOfFire{
             
-            final LowLagFire[] wall = new LowLagFire[4];
+            final LowLagFire[] wall;
             final int spikes;
             
             WallOfFire(final int y, int a){
                 spikes = a;
+                wall = new LowLagFire[a];
                 int j = 0;
                 handler.purge(y);
                 for(int n=y;n<spikes*16+y;n+=16){
