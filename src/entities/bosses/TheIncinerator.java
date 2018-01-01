@@ -232,7 +232,7 @@ public class TheIncinerator extends Boss{
         public Phase2(double th, Handler h, GameObject targ){
             super(th, h, targ);
             wallHeight = 200;
-            wall = new WallOfFire(wallHeight);
+            wall = new WallOfFire(wallHeight, 5);
         }
 
         @Override
@@ -369,8 +369,13 @@ public class TheIncinerator extends Boss{
                 case "WaitingToExtend": clock--; if(clock<=0) fireMode = "Extending"; break;
                 case "SetSpawn": spawnTime = System.currentTimeMillis(); wall.activate(); break;
             }
+            sear();
             updateWall();
             if(!minionsAlive()) fireMode = "Retracting";
+        }
+        
+        void sear(){
+            if(target.y<wallHeight) target.hurt(6d+5d*madnessCoefficient());
         }
         
         void spawn(){
@@ -415,18 +420,16 @@ public class TheIncinerator extends Boss{
             }
         }
         
-        void purge(int y){
-            handler.purge(y);
-        }
-        
         private class WallOfFire{
             
             final LowLagFire[] wall = new LowLagFire[4];
+            final int spikes;
             
-            WallOfFire(final int y){
+            WallOfFire(final int y, int a){
+                spikes = a;
                 int j = 0;
                 handler.purge(y);
-                for(int n=y;n<64+y;n+=16){
+                for(int n=y;n<spikes*16+y;n+=16){
                     wall[j] = new LowLagFire(Integer.MAX_VALUE, 4, (j%2.0==0?width-1:1), n, (j%2.0==0?-7.0:7.0), 0,   0.0, 100, 1, 8);
                     j++;
                 }
@@ -434,7 +437,7 @@ public class TheIncinerator extends Boss{
             
             void setY(final int y){
                 int j = 0;
-                for(int n=y;n<64+y;n+=16){
+                for(int n=y;n<spikes*16+y;n+=16){
                     wall[j].y = n;
                     j++;
                 }
@@ -476,7 +479,7 @@ public class TheIncinerator extends Boss{
                     }
                 };
                 t.x = fire.x;
-                t.y = fire.y;
+                t.y = Decider.r.nextInt(width-100)+50;
                 handler.addObject(t);
             }
         }
@@ -499,7 +502,7 @@ public class TheIncinerator extends Boss{
                     }
                 };
                 t.x = fire.x;
-                t.y = fire.y;
+                t.y = Decider.r.nextInt(width-100)+50;
                 handler.addObject(t);
             }
         }
@@ -509,7 +512,7 @@ public class TheIncinerator extends Boss{
             for(int n=0;n<amount;n++){
                 Bomb t = new Bomb(2+(int)(3d*madnessCoefficient()), target){{xp=0;}};
                 t.x = fire.x;
-                t.y = fire.y;
+                t.y = Decider.r.nextInt(width-100)+50;
                 handler.addObject(t);
             }
         }        

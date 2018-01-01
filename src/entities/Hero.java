@@ -119,7 +119,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
 
     public Hero(Main main){
-        super("Hero", 1030, 48, 48);
+        super("Hero", 30, 48, 48);
         main.addKeyListener(this);
         main.addMouseListener(this);
         main.addMouseMotionListener(this);

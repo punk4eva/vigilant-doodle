@@ -95,17 +95,18 @@ public class Decider implements ActionListener, KeyListener{
             case "Shooter": return new Shooter(level, handler.hero, handler);
             case "Gunner": return new Gunner(level, handler.hero, handler);
             case "Tank": return new Tank(level, handler.hero, handler);
-            case "Eviscerator": return new TheEviscerator(handler, handler.hero, 400, 800, 500);
+            case "Eviscerator": return new TheEviscerator(handler, handler.hero, 400, 800, 600);
             case "Incinerator": return new TheIncinerator(handler, handler.hero, 2000, 2000);
-            default: if(level==4) return new TheEviscerator(handler, handler.hero, 400, 800, 500);
+            default: if(level==4) return new TheEviscerator(handler, handler.hero, 400, 800, 600);
                 if(level==8) return new TheIncinerator(handler, handler.hero, 2000, 2000);
                 if(r.nextInt(2+level)<level){
                     if(level<3||r.nextInt(4+level)>level) return new Shooter(level, handler.hero, handler);
-                    else return new Gunner(level, handler.hero, handler);
+                    else if(level<7||r.nextInt(5+level)>level) return new Gunner(level, handler.hero, handler);
+                    else return new Grenadier(level, handler.hero, handler);
                 }else{
                     if(level<5||r.nextInt(6+level)>level) return new Tracker(handler.hero, level);
-                    else if(level<7||r.nextInt(6+level)>level) return new Tank(level, handler.hero, handler);
-                    else return new Grenadier(level, handler.hero, handler);
+                    else if(level<9||r.nextInt(6+level)>level) return new Tank(level, handler.hero, handler);
+                    else return new Bomb(level, handler.hero);
                 }
         }
     }
