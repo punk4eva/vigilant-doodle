@@ -70,7 +70,7 @@ public class Boss extends Enemy{
 
     protected void nextPhase(int phaseNum, Handler handler){}
     
-    protected abstract class BossPhase extends Enemy{
+    protected static abstract class BossPhase extends Enemy{
 
         private final double triggerHealth;
         private final boolean flyThrough;
