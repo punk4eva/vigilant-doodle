@@ -1,2 +1,2 @@
-java -jar "C:\Users\Adam\Documents\NetBeansProjects\Yoisupiru\dist\Yoisupiru.jar"
+java -jar "dist\Yoisupiru.jar"
 PAUSE 
