@@ -15,6 +15,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
 import javax.swing.Timer;
+import static logic.ConstantFields.minSpawnDelay;
+import static logic.ConstantFields.spawnDelay;
 
 /**
  *
@@ -28,14 +30,11 @@ public class Decider implements ActionListener, KeyListener{
     private String mode = "Normal";
     private boolean boss;
     public static final Random r = new Random();
-    private final int spawnDelay;
-    private static final int MINSPAWNDELAY = 7000; 
     
-    public Decider(Main main, int sd){
+    public Decider(Main main){
         handler = main.handler;
-        spawnDelay = sd;
         int sp = 1500+spawnDelay;
-        timer = new Timer(sp<MINSPAWNDELAY ? MINSPAWNDELAY : sp, this);
+        timer = new Timer(sp<minSpawnDelay ? minSpawnDelay : sp, this);
         timer.start();
         main.addKeyListener(this);
     }
@@ -43,7 +42,7 @@ public class Decider implements ActionListener, KeyListener{
     public void levelChange(int l){
         level = l;
         int sp = 2500 + spawnDelay/l;
-        timer = new Timer(sp<MINSPAWNDELAY ? MINSPAWNDELAY : sp, this);
+        timer = new Timer(sp<minSpawnDelay ? minSpawnDelay : sp, this);
         timer.start();
     }
 
@@ -95,10 +94,10 @@ public class Decider implements ActionListener, KeyListener{
             case "Shooter": return new Shooter(level, handler.hero, handler);
             case "Gunner": return new Gunner(level, handler.hero, handler);
             case "Tank": return new Tank(level, handler.hero, handler);
-            case "Eviscerator": return new TheEviscerator(handler, handler.hero, 400, 800, 600);
-            case "Incinerator": return new TheIncinerator(handler, handler.hero, 2000, 2000);
-            default: if(level==4) return new TheEviscerator(handler, handler.hero, 400, 800, 600);
-                if(level==8) return new TheIncinerator(handler, handler.hero, 2000, 2000);
+            case "Eviscerator": return new TheEviscerator(handler, handler.hero);
+            case "Incinerator": return new TheIncinerator(handler, handler.hero);
+            default: if(level==4) return new TheEviscerator(handler, handler.hero);
+                if(level==8) return new TheIncinerator(handler, handler.hero);
                 if(r.nextInt(2+level)<level){
                     if(level<3||r.nextInt(4+level)>level) return new Shooter(level, handler.hero, handler);
                     else if(level<7||r.nextInt(5+level)>level) return new Gunner(level, handler.hero, handler);

@@ -1,0 +1,15 @@
+printFields = true
+graphicsQuality = 2.0
+buffColor = ffffff00
+itemColor = ff00ffff
+hp11 = 400
+hp12 = 800
+hp13 = 600
+hp21 = 2000
+hp22 = 2000
+pointAndTeleport = true
+minSpawnDelay = 7000
+spawnDelay = 6500
+courseCorrectionFactor = 0.1
+mobCap = 12
+consCap = 12

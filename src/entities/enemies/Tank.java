@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
+import static logic.ConstantFields.courseCorrectionFactor;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 
@@ -80,22 +81,22 @@ public class Tank extends Enemy{
     void courseCorrection(){
         double dx = target.x+target.width/2, dy = target.y+target.height/2;
         if(dy<y&&vely>-speed){
-            if(vely-0.1<-speed){
+            if(vely-courseCorrectionFactor<-speed){
                 vely = -speed;
-            }else vely -= 0.1;
+            }else vely -= courseCorrectionFactor;
         }else if(dy>y&&vely<speed){
-            if(vely+0.1>speed){
+            if(vely+courseCorrectionFactor>speed){
                 vely = speed;
-            }else vely += 0.1;
+            }else vely += courseCorrectionFactor;
         }
         if(dx<x&&velx>-speed){
-            if(velx-0.1<-speed){
+            if(velx-courseCorrectionFactor<-speed){
                 velx = -speed;
-            }else velx -= 0.1;
+            }else velx -= courseCorrectionFactor;
         }else if(dx>x&&velx<speed){
             if(velx+0.1>speed){
                 velx = speed;
-            }else velx += 0.1;
+            }else velx += courseCorrectionFactor;
         }
     }
     

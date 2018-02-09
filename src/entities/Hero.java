@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import logic.KeyBindings;
+import logic.ConstantFields;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -125,7 +125,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         main.addMouseMotionListener(this);
         main.addMouseWheelListener(this);
         main.handler = new Handler(this);
-        main.decider = new Decider(main, 6500);
+        main.decider = new Decider(main);
         main.window = new Window(Main.WIDTH, Main.HEIGHT, "Supiru", main);
         switch(main.getDifficulty()){
             case "Easy":
@@ -186,14 +186,14 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     public void drawMessages(Graphics g){
-        g.setColor(Color.yellow);
+        g.setColor(ConstantFields.buffColor);
         g.drawString(shootingMode.name() + (shootingMode.level==0 ? "" : " +" + shootingMode.level), 8, 18);
         int n = 38;
         synchronized(buffs){ for(Buff b : buffs){
             g.drawString(b.name, 8, n);
             n+=20;
         }}
-        g.setColor(Color.CYAN);
+        g.setColor(ConstantFields.itemColor);
         n = Main.HEIGHT-58;
         synchronized(usables){ for(Usable u : usables){
             g.drawString(u.name, 8, n);
@@ -400,7 +400,12 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     @Override
-    public void mouseClicked(MouseEvent me){x=me.getX()-width/2;y=me.getY()-height/2;}
+    public void mouseClicked(MouseEvent me){
+        if(ConstantFields.pointAndTeleport){
+            x=me.getX()-width/2;
+            y=me.getY()-height/2;
+        }
+    }
     @Override
     public void mousePressed(MouseEvent me){}
     @Override
@@ -432,7 +437,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     @Override
     public void keyPressed(KeyEvent ke){
-        if(ke.getKeyCode()==KeyBindings.PAUSE) Window.main.pause();
+        if(ke.getKeyCode()==ConstantFields.PAUSE) Window.main.pause();
         else if(!currentKeys.contains(ke.getKeyCode())) currentKeys.add(ke.getKeyCode());
     }
     @Override
@@ -441,10 +446,10 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     private void tickKeys(Handler handler){
-        boolean w = currentKeys.contains(KeyBindings.UP);
-        boolean a = currentKeys.contains(KeyBindings.LEFT);
-        boolean s = currentKeys.contains(KeyBindings.DOWN);
-        boolean d = currentKeys.contains(KeyBindings.RIGHT);
+        boolean w = currentKeys.contains(ConstantFields.UP);
+        boolean a = currentKeys.contains(ConstantFields.LEFT);
+        boolean s = currentKeys.contains(ConstantFields.DOWN);
+        boolean d = currentKeys.contains(ConstantFields.RIGHT);
         if(w&&!s&&y>0){
             vely = -speed;
         }else if(s&&!w&&y+height<Main.HEIGHT-24){
@@ -455,7 +460,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         }else if(d&&!a&&x+width<Main.WIDTH){
             velx = speed;
         }else velx = 0;
-        if(currentKeys.contains(KeyBindings.SHOOT)&&reloadStatus>=10&&weaponHeat<=0){
+        if(currentKeys.contains(ConstantFields.SHOOT)&&reloadStatus>=10&&weaponHeat<=0){
             shoot(handler);
         }
     }

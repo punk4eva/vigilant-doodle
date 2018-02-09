@@ -4,6 +4,7 @@ package logic;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import static logic.ConstantFields.graphicsQuality;
 
 /**
  *
@@ -31,8 +32,8 @@ public class TrailGenerator{
     }
 
     public TrailGenerator(float f, int... v){
-        intensity = v[0];
-        capacity = v[1];
+        intensity = v[0]<4-graphicsQuality?4-(int)graphicsQuality:v[0];
+        capacity = v[1]>10d*graphicsQuality?(int)(10d*graphicsQuality):v[1];
         width = v[2];
         height = v[3];
         R = v[4];

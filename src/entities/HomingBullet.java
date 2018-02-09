@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import logic.TrailGenerator;
 import yoisupiru.Decider;
 import yoisupiru.Main;
+import static logic.ConstantFields.courseCorrectionFactor;
 
 /**
  *
@@ -52,22 +53,22 @@ public class HomingBullet extends Bullet{
         if(target==null) return;
         int dx = target.x+target.width/2, dy = target.y+target.height/2;
         if(dy<y&&vely>-bulletSpeed){
-            if(vely-0.1<-bulletSpeed){
+            if(vely-courseCorrectionFactor<-bulletSpeed){
                 vely = -bulletSpeed;
-            }else vely -= 0.1;
+            }else vely -= courseCorrectionFactor;
         }else if(dy>y&&vely<bulletSpeed){
-            if(vely+0.1>bulletSpeed){
+            if(vely+courseCorrectionFactor>bulletSpeed){
                 vely = bulletSpeed;
-            }else vely += 0.1;
+            }else vely += courseCorrectionFactor;
         }
         if(dx<x&&velx>-bulletSpeed){
-            if(velx-0.1<-bulletSpeed){
+            if(velx-courseCorrectionFactor<-bulletSpeed){
                 velx = -bulletSpeed;
-            }else velx -= 0.1;
+            }else velx -= courseCorrectionFactor;
         }else if(dx>x&&velx<bulletSpeed){
-            if(velx+0.1>bulletSpeed){
+            if(velx+courseCorrectionFactor>bulletSpeed){
                 velx = bulletSpeed;
-            }else velx += 0.1;
+            }else velx += courseCorrectionFactor;
         }
     }
     

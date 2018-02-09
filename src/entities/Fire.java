@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import logic.Collision;
+import static logic.ConstantFields.graphicsQuality;
 import logic.TrailGenerator;
 import yoisupiru.Decider;
 
@@ -31,7 +32,7 @@ public class Fire extends Enemy{
         fireLevel = lvl;
         torque = to;
         length = len;
-        intensity = in;
+        intensity = in<4-graphicsQuality?4-(int)graphicsQuality:in;
         duration = dur;
         x = _x;
         y = _y;

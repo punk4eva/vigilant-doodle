@@ -18,6 +18,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
+import logic.ConstantFields;
+import static logic.ConstantFields.courseCorrectionFactor;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -28,10 +30,10 @@ import yoisupiru.Main;
  */
 public class TheEviscerator extends Boss{
     
-    public TheEviscerator(Handler h, GameObject targ, int hp1, int hp2, int hp3){
-        super("The Eviscerator", hp1+hp2+hp3, 20, "The_Eviscerator.wav", 
-                new Phase1(targ, 26, 6), new Phase2(h, targ,hp3+hp2,hp2),
-                new Phase3(h, targ, hp3, 27, 7));
+    public TheEviscerator(Handler h, GameObject targ){
+        super("The Eviscerator", ConstantFields.hp11+ConstantFields.hp12+ConstantFields.hp13, 20, "The_Eviscerator.wav", 
+                new Phase1(targ, 26, 6), new Phase2(h, targ,ConstantFields.hp13+ConstantFields.hp12,ConstantFields.hp12),
+                new Phase3(h, targ, ConstantFields.hp13, 27, 7));
         ((Phase2)phases[1]).instance = this;
     }
     
@@ -131,22 +133,22 @@ public class TheEviscerator extends Boss{
         void courseCorrection(){
             int dx = target.x+target.width/2, dy = target.y+target.height/2;
             if(dy<y&&vely>-speed){
-                if(vely-0.1<-speed){
+                if(vely-courseCorrectionFactor<-speed){
                     vely = -speed;
-                }else vely -= 0.1;
+                }else vely -= courseCorrectionFactor;
             }else if(dy>y&&vely<speed){
-                if(vely+0.1>speed){
+                if(vely+courseCorrectionFactor>speed){
                     vely = speed;
-                }else vely += 0.1;
+                }else vely += courseCorrectionFactor;
             }
             if(dx<x&&velx>-speed){
-                if(velx-0.1<-speed){
+                if(velx-courseCorrectionFactor<-speed){
                     velx = -speed;
-                }else velx -= 0.1;
+                }else velx -= courseCorrectionFactor;
             }else if(dx>x&&velx<speed){
-                if(velx+0.1>speed){
+                if(velx+courseCorrectionFactor>speed){
                     velx = speed;
-                }else velx += 0.1;
+                }else velx += courseCorrectionFactor;
             }
         }
         

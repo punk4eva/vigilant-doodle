@@ -17,6 +17,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
+import static logic.ConstantFields.mobCap;
+import static logic.ConstantFields.consCap;
 
 /**
  *
@@ -28,8 +30,6 @@ public class Handler implements ActionListener{
     private final Timer timer;
     public final Hero hero;
     private volatile LinkedBlockingQueue<Runnable> queuedEvents = new LinkedBlockingQueue<>();
-    private final int MOBCAP = 12;
-    private final int CONSCAP = 12;
     private int mobNum = 0, consNum = 0;
     
     public Handler(Hero h){
@@ -46,13 +46,13 @@ public class Handler implements ActionListener{
     public void addObject(GameObject ob){
         queuedEvents.add(() -> {
             if(ob instanceof Enemy){
-                if(mobNum<MOBCAP||((Enemy)ob).forced) synchronized(objects){
+                if(mobNum<mobCap||((Enemy)ob).forced) synchronized(objects){
                     if(!((Enemy)ob).forced) mobNum++;
                     timer.addActionListener(ob);
                     objects.add(ob);
                 }
             }else if(ob instanceof Consumable){
-                if(consNum<CONSCAP||((Consumable)ob).forced) synchronized(objects){
+                if(consNum<consCap||((Consumable)ob).forced) synchronized(objects){
                     if(!((Consumable)ob).forced) consNum++;
                     timer.addActionListener(ob);
                     objects.add(ob);

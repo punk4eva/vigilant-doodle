@@ -18,6 +18,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import logic.Collision;
+import logic.ConstantFields;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -35,9 +36,9 @@ public class TheIncinerator extends Boss{
         return new Color((int)(152.5+102.5*Math.sin((frameNum+50d*num)/100d)), 0, 0);
     }
     
-    public TheIncinerator(Handler h, GameObject targ, int hp1, int hp2){
-        super("The Incinerator", hp1+hp2, 40, "The_Incinerator.wav",
-                new Phase1(h, targ), new Phase2(hp2, h, targ));
+    public TheIncinerator(Handler h, GameObject targ){
+        super("The Incinerator", ConstantFields.hp21+ConstantFields.hp22, 40, "The_Incinerator.wav",
+                new Phase1(h, targ), new Phase2(ConstantFields.hp22, h, targ));
         fire = new Fire(7.0, 1, width/2, 194, 0, 6.0, Math.PI/10d, 150, 5000, 3);
         fuelTank = new FuelTank((int)(11d*width/12d), 16);
         ((Phase1)phases[0]).setClock();

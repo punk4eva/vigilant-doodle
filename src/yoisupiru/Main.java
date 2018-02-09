@@ -49,7 +49,6 @@ public class Main extends Canvas implements Runnable, MouseListener{
         long timer = System.currentTimeMillis();
         int frames = 0;
         while(running){
-            long now = System.nanoTime();
             synchronized(soundSystem){ while(paused) try{
                 soundSystem.wait();
             }catch(InterruptedException e){}}

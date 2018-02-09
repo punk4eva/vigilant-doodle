@@ -10,6 +10,7 @@ import entities.bosses.Boss;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import static logic.ConstantFields.courseCorrectionFactor;
 import yoisupiru.Handler;
 
 /**
@@ -139,36 +140,26 @@ public abstract class Usable extends Consumable{
                 super(7, dam, -1, -1, -1);
             }
             
-            /*@Override
-            public void collision(GameObject ob){
-            if(ob instanceof Bullet){
-            if(!(ob instanceof Missile)) updateOtherVelocity(ob);
-            }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)&&!(ob instanceof Hero)){
-            hp = -1;
-            ob.hp -= damage;
-            }
-            }*/
-            
             void courseCorrection(){
                 if(target==null) return;
                 int dx = target.x+target.width/2, dy = target.y+target.height/2;
                 if(dy<y&&vely>-bulletSpeed){
-                    if(vely-0.1<-bulletSpeed){
+                    if(vely-courseCorrectionFactor<-bulletSpeed){
                         vely = -bulletSpeed;
-                    }else vely -= 0.1;
+                    }else vely -= courseCorrectionFactor;
                 }else if(dy>y&&vely<bulletSpeed){
-                    if(vely+0.1>bulletSpeed){
+                    if(vely+courseCorrectionFactor>bulletSpeed){
                         vely = bulletSpeed;
-                    }else vely += 0.1;
+                    }else vely += courseCorrectionFactor;
                 }
                 if(dx<x&&velx>-bulletSpeed){
-                    if(velx-0.1<-bulletSpeed){
+                    if(velx-courseCorrectionFactor<-bulletSpeed){
                         velx = -bulletSpeed;
-                    }else velx -= 0.1;
+                    }else velx -= courseCorrectionFactor;
                 }else if(dx>x&&velx<bulletSpeed){
                     if(velx+0.1>bulletSpeed){
                         velx = bulletSpeed;
-                    }else velx += 0.1;
+                    }else velx += courseCorrectionFactor;
                 }
             }
             
