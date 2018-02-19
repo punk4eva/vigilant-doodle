@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import logic.ConstantFields;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
@@ -41,7 +42,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     public int xp = 0, maxxp = 5;
     public double regen = 0.01;
     public double invulnerability = 0;
-    private boolean meleeMode = false;
+    private MeleeHero melee = null;
     public ShootingMode shootingMode = ShootingMode.CONSTANT;
     private ShootingMode modes[] = ShootingMode.values();
     private int shootingModeIndex = 2;
@@ -105,8 +106,9 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         }
         
         public Enemy findNearestEnemy(Handler handler, Hero h){
-            synchronized(handler.objects){
-                List l = handler.objects.stream().filter(go -> go instanceof Enemy).sorted((a, b) -> {
+            Stream<GameObject> stream = handler.getStream();
+            synchronized(stream){
+                List l = stream.filter(go -> go instanceof Enemy).sorted((a, b) -> {
                     int da = Math.abs(a.x+a.y-h.x-h.y), db = Math.abs(b.x+b.y-h.x-h.y);
                     if(da==db) return 0;
                     if(da>db) return 1;
@@ -173,16 +175,18 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
 
     @Override
     public void render(Graphics g, long frameNum){
-        Graphics2D g2d = (Graphics2D)g;
-        g2d.setColor(getHealthColor());
-        g2d.fillRect(x, y, 48, 48);
-        g2d.setColor(Color.black);
-        g2d.fillRect(x+10, y+10, 28, 28);
-        g2d.setColor(getHeatColor());
-        Rectangle rect = new Rectangle(x+18, y+18, 12, 12);
-        AffineTransform at = new AffineTransform();
-        at.rotate(Math.PI/4, rect.x+rect.width/2, rect.y+rect.height/2);
-        g2d.fill(at.createTransformedShape(rect));
+        if(melee==null){
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.setColor(getHealthColor());
+            g2d.fillRect(x, y, 48, 48);
+            g2d.setColor(Color.black);
+            g2d.fillRect(x+10, y+10, 28, 28);
+            g2d.setColor(getHeatColor());
+            Rectangle rect = new Rectangle(x+18, y+18, 12, 12);
+            AffineTransform at = new AffineTransform();
+            at.rotate(Math.PI/4, rect.x+rect.width/2, rect.y+rect.height/2);
+            g2d.fill(at.createTransformedShape(rect));
+        }else melee.render(g, frameNum, x, y);
     }
     
     public void drawMessages(Graphics g){
@@ -211,7 +215,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     
     @Override
     public void collision(GameObject ob){
-        
+        if(melee!=null) melee.collision(ob);
     }
     
     void shoot(Handler handler){
@@ -298,18 +302,16 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         }
     }
     
-    public void consume(Consumable c){
-        
-    }
-    
     public void addBuff(Buff b){
-        if(!(isOnFire()&&b.name.startsWith("On Fire")))synchronized(buffs){
+        if(!(isOnFire()&&b.name.startsWith("On Fire"))&&!(isSlow()&&b.name.startsWith("Speed x0")))synchronized(buffs){
             buffs.add(b);
             b.startTime();
             b.start(this);
             if(b.buffSound!=null) Main.soundSystem.playSFX(b.buffSound);
         }
     }
+    
+    public void consume(Consumable c){}
     
     public void removeBuff(Buff b){
         synchronized(buffs){
@@ -321,6 +323,12 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     public boolean isOnFire(){
         synchronized(buffs){
             return buffs.stream().anyMatch(b -> b.name.startsWith("On Fire"));
+        }
+    }
+    
+    public boolean isSlow(){
+        synchronized(buffs){
+            return buffs.stream().anyMatch(b -> b.name.startsWith("Speed x0"));
         }
     }
     
@@ -395,8 +403,15 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         damageMult /= m;
     }
     
-    public void setMeleeMode(boolean f){
-        meleeMode = f;
+    public void setMeleeMode(MeleeHero f){
+        melee = f;
+    }
+    
+    @Override
+    protected void boundsCheck(Handler h){
+        if(melee!=null){
+            if(melee.boundsCheck(x, y, this)) melee = null;
+        }
     }
     
     @Override
@@ -450,18 +465,25 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
         boolean a = currentKeys.contains(ConstantFields.LEFT);
         boolean s = currentKeys.contains(ConstantFields.DOWN);
         boolean d = currentKeys.contains(ConstantFields.RIGHT);
-        if(w&&!s&&y>0){
-            vely = -speed;
-        }else if(s&&!w&&y+height<Main.HEIGHT-24){
-            vely = speed;
-        }else vely = 0;
-        if(a&&!d&&x>0){
-            velx = -speed;
-        }else if(d&&!a&&x+width<Main.WIDTH){
-            velx = speed;
-        }else velx = 0;
-        if(currentKeys.contains(ConstantFields.SHOOT)&&reloadStatus>=10&&weaponHeat<=0){
-            shoot(handler);
+        if(melee==null){
+            if(w&&!s&&y>0){
+                vely = -speed;
+            }else if(s&&!w&&y+height<Main.HEIGHT-24){
+                vely = speed;
+            }else vely = 0;
+            if(a&&!d&&x>0){
+                velx = -speed;
+            }else if(d&&!a&&x+width<Main.WIDTH){
+                velx = speed;
+            }else velx = 0;
+        }else{
+            melee.track(aimx, aimy, x, y);
+            velx = melee.velx;
+            vely = melee.vely;
+        }
+        if(currentKeys.contains(ConstantFields.SHOOT)){
+            if(melee!=null) melee.push(handler);
+            else if(reloadStatus>=10&&weaponHeat<=0) shoot(handler);
         }
     }
     

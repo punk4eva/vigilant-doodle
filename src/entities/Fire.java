@@ -11,6 +11,7 @@ import logic.Collision;
 import static logic.ConstantFields.graphicsQuality;
 import logic.TrailGenerator;
 import yoisupiru.Decider;
+import yoisupiru.Handler;
 
 /**
  *
@@ -51,6 +52,9 @@ public class Fire extends Enemy{
     @Override
     public void hurt(double damage){}
 
+    @Override
+    public void boundsCheck(Handler h){}
+    
     @Override
     public boolean isColliding(Collision c){
         synchronized(particles){

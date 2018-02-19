@@ -29,6 +29,7 @@ public abstract class GameObject extends Collision implements ActionListener{
     
     public synchronized void tick(Handler handler){
         healthCheck(handler);
+        boundsCheck(handler);
     }
     
     public synchronized void move(){

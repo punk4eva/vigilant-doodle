@@ -581,7 +581,7 @@ public class TheIncinerator extends Boss{
         return 7d*getAngleForCoords(ob.x, ob.y);
     }
 
-    private static double obtuseAtan(double x, double y){
+    public static double obtuseAtan(double x, double y){
         if(x>0&&y>=0) return Math.atan(y/x);
         if(x<=0&&y>0) return Math.atan(-x/y)+Math.PI/2d;
         if(x<0&&y<=0) return Math.atan(y/x)+Math.PI/2d;

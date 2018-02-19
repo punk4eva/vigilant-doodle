@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import logic.NonCollidable;
 import logic.TrailGenerator;
 import yoisupiru.Main;
 
@@ -13,7 +14,7 @@ import yoisupiru.Main;
  *
  * @author Adam Whittaker
  */
-public class Missile extends Bullet{
+public class Missile extends Bullet implements NonCollidable{
     
     private final TrailGenerator trail;
     
@@ -41,10 +42,10 @@ public class Missile extends Bullet{
     @Override
     public void collision(GameObject ob) {
         if (ob instanceof Bullet) {
-            if (!(ob instanceof Missile)) {
+            if (!(ob instanceof NonCollidable)) {
                 updateOtherVelocity(ob);
             }
-        } else if (!(ob instanceof Consumable) && !(ob instanceof Boss && ((Boss) ob).flythroughMode)) {
+        } else if (!(ob instanceof NonCollidable) && !(ob instanceof Boss && ((Boss) ob).flythroughMode)) {
             hp = -1;
             ob.hp -= damage;
         }

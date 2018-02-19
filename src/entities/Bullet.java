@@ -5,6 +5,7 @@ import entities.bosses.Boss;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import logic.NonCollidable;
 import yoisupiru.Handler;
 
 /**
@@ -49,8 +50,8 @@ public class Bullet extends GameObject{
     @Override
     public void collision(GameObject ob){
         if(ob instanceof Bullet){
-            if(!(ob instanceof Missile)) updateBothVelocities(ob);
-        }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
+            if(!(ob instanceof NonCollidable)) updateBothVelocities(ob);
+        }else if(!(ob instanceof NonCollidable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
             hp = -1;
             ob.hurt(damage);
         }

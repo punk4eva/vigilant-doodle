@@ -3,6 +3,7 @@ package yoisupiru;
 
 import entities.Enemy;
 import entities.Hero;
+import entities.MeleeHero;
 import entities.enemies.Tracker;
 import java.awt.Canvas;
 import java.awt.Dimension;
@@ -56,6 +57,10 @@ public class Window extends Canvas{
         en.x = 500;
         en.y = 500;
         m.handler.addObject(en);
+//        try{
+//            Thread.sleep(3000);
+//            hero.setMeleeMode(new MeleeHero(25000, 5));
+//        }catch(InterruptedException e){}
     }
     
 }

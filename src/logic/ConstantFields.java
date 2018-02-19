@@ -34,12 +34,17 @@ public class ConstantFields{
     public static int hp13;
     public static int hp21;
     public static int hp22;
+    public static int hp31;
+    public static int hp32;
+    public static int hp33;
+    public static int hp34;
     
     public static boolean printFields;
     public static boolean pointAndTeleport;
     public static int minSpawnDelay, spawnDelay;
     public static double courseCorrectionFactor;
     public static int mobCap, consCap;
+    public static double meleeAccFactor, meleeRotationFactor;
     
     static{
         try(BufferedReader r = new BufferedReader(new FileReader(new File("src/config.txt")))){
@@ -53,9 +58,15 @@ public class ConstantFields{
                 else if(line.startsWith("hp13")) hp13 = Integer.parseInt(line.substring(7));
                 else if(line.startsWith("hp21")) hp21 = Integer.parseInt(line.substring(7));
                 else if(line.startsWith("hp22")) hp22 = Integer.parseInt(line.substring(7));
+                else if(line.startsWith("hp31")) hp31 = Integer.parseInt(line.substring(7));
+                else if(line.startsWith("hp32")) hp32 = Integer.parseInt(line.substring(7));
+                else if(line.startsWith("hp33")) hp33 = Integer.parseInt(line.substring(7));
+                else if(line.startsWith("hp34")) hp34 = Integer.parseInt(line.substring(7));
                 else if(line.startsWith("mobCap")) mobCap = Integer.parseInt(line.substring(9));
                 else if(line.startsWith("consCap")) consCap = Integer.parseInt(line.substring(10));
                 else if(line.startsWith("graphicsQuality")) graphicsQuality = Double.parseDouble(line.substring(18));
+                else if(line.startsWith("meleeAccFactor")) meleeAccFactor = Double.parseDouble(line.substring(17));
+                else if(line.startsWith("meleeRotationFactor")) meleeRotationFactor = Double.parseDouble(line.substring(22));
                 else if(line.startsWith("pointAndTeleport")) pointAndTeleport = Boolean.parseBoolean(line.substring(19));
                 else if(line.startsWith("courseCorrectionFactor")) courseCorrectionFactor = Double.parseDouble(line.substring(25));
                 else if(line.startsWith("minSpawnDelay")) minSpawnDelay = Integer.parseInt(line.substring(16));
@@ -75,10 +86,16 @@ public class ConstantFields{
             System.out.println("hp13 = " + hp13);
             System.out.println("hp21 = " + hp21);
             System.out.println("hp22 = " + hp22);
+            System.out.println("hp31 = " + hp31);
+            System.out.println("hp32 = " + hp32);
+            System.out.println("hp33 = " + hp33);
+            System.out.println("hp34 = " + hp34);
             System.out.println("pointAndTeleport = " + pointAndTeleport);
             System.out.println("minSpawnDelay = " + minSpawnDelay);
             System.out.println("spawnDelay = " + spawnDelay);
             System.out.println("courseCorrectionFactor = " + courseCorrectionFactor);
+            System.out.println("meleeAccFactor = " + meleeAccFactor);
+            System.out.println("meleeRotationFactor = " + meleeRotationFactor);
             System.out.println("mobCap = " + mobCap);
             System.out.println("consCap = " + consCap);
         }

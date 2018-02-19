@@ -11,6 +11,7 @@ import logic.TrailGenerator;
 import yoisupiru.Decider;
 import yoisupiru.Main;
 import static logic.ConstantFields.courseCorrectionFactor;
+import logic.NonCollidable;
 
 /**
  *
@@ -135,9 +136,9 @@ public class HomingBullet extends Bullet{
         @Override
         public void collision(GameObject ob){
             if(ob instanceof Bullet){
-                if(!(ob instanceof Missile)) updateBothVelocities(ob);
+                if(!(ob instanceof NonCollidable)) updateBothVelocities(ob);
                 hp -= ((Bullet)ob).damage;
-            }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
+            }else if(!(ob instanceof NonCollidable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
                 hp = -1;
                 ob.hurt(damage);
                 if(ob instanceof Hero) ((Hero)ob).addBuff(new FireDebuff(-1, -1, 2, 2000+Decider.r.nextInt(3001)));

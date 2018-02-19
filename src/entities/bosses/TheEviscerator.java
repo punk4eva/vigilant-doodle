@@ -2,7 +2,6 @@
 package entities.bosses;
 
 import entities.Bullet;
-import entities.Consumable;
 import entities.GameObject;
 import entities.Hero;
 import entities.Missile;
@@ -20,6 +19,7 @@ import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
 import logic.ConstantFields;
 import static logic.ConstantFields.courseCorrectionFactor;
+import logic.NonCollidable;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -199,8 +199,8 @@ public class TheEviscerator extends Boss{
             super.actionPerformed(ae);
             if(lunging){
                 if(clock==0) lunge();
+                else if(clock>=24) lunging = false;
                 clock++;
-                if(clock>=25) lunging = false;
             }else{
                 courseCorrection();
                 clock++;
@@ -221,8 +221,8 @@ public class TheEviscerator extends Boss{
             @Override
             public void collision(GameObject ob){
                 if(ob instanceof Bullet){
-                    if(!(ob instanceof Missile)) updateOtherVelocity(ob);
-                }else if(!(ob instanceof Consumable)&&!(ob instanceof Boss)&&!(ob instanceof Minion)){
+                    if(!(ob instanceof NonCollidable)) updateOtherVelocity(ob);
+                }else if(!(ob instanceof NonCollidable)&&!(ob instanceof Boss)&&!(ob instanceof Minion)){
                     hp = -1;
                     ob.hp -= damage;
                 }
@@ -417,7 +417,7 @@ public class TheEviscerator extends Boss{
             handler.addObject(bullet.create((int)sx, (int)sy, vx+0.2, vy-0.2));
         }
         
-        void takeDamage(double dam){
+        private void takeDamage(double dam){
             instance.hp -= dam;
         }
         

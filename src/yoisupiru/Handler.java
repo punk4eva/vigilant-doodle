@@ -16,9 +16,11 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.Timer;
 import static logic.ConstantFields.mobCap;
 import static logic.ConstantFields.consCap;
+import logic.Twin;
 
 /**
  *
@@ -26,7 +28,8 @@ import static logic.ConstantFields.consCap;
  */
 public class Handler implements ActionListener{
     
-    public final List<GameObject> objects = new LinkedList<>();
+    protected volatile int twinsPresent = 0;
+    private final List<GameObject> objects = new LinkedList<>();
     private final Timer timer;
     public final Hero hero;
     private volatile LinkedBlockingQueue<Runnable> queuedEvents = new LinkedBlockingQueue<>();
@@ -47,6 +50,7 @@ public class Handler implements ActionListener{
         queuedEvents.add(() -> {
             if(ob instanceof Enemy){
                 if(mobNum<mobCap||((Enemy)ob).forced) synchronized(objects){
+                    if(ob instanceof Twin) twinsPresent++;
                     if(!((Enemy)ob).forced) mobNum++;
                     timer.addActionListener(ob);
                     objects.add(ob);
@@ -74,6 +78,7 @@ public class Handler implements ActionListener{
             }
         });
         if(ob instanceof Enemy){
+            if(ob instanceof Twin) twinsPresent--;
             mobNum--;
             int l = hero.level;
             hero.tryLevelUp(((Enemy) ob).xp);
@@ -116,7 +121,24 @@ public class Handler implements ActionListener{
     
     public boolean checkIfExists(Predicate<GameObject> pred){
         synchronized(objects){
-            return objects.stream().anyMatch(pred);
+            return getStream().anyMatch(pred);
+        }
+    }
+    
+    public void collideEverything(GameObject ob){
+        queuedEvents.add(() -> {
+            synchronized(objects){
+                getStream().forEach(o -> {
+                    ob.collision(o);
+                });
+            }
+        });
+    }
+    
+    public Stream<GameObject> getStream(){
+        synchronized(objects){
+            if(twinsPresent==0) return objects.stream();
+            return objects.stream().collect(TwinCollector::new, TwinCollector::accept, TwinCollector::combine).stream();
         }
     }
 
@@ -165,6 +187,25 @@ public class Handler implements ActionListener{
                 }
             }
         });
+    }
+    
+    private static class TwinCollector{
+        
+        private List<GameObject> list = new LinkedList<>();
+        
+        public void accept(Object ob){
+            if(ob instanceof Twin) list.addAll(((Twin) ob).getTwinObjects());
+            else list.add((GameObject) ob);
+        }
+        
+        public void combine(TwinCollector tc){
+            list.addAll(tc.list);
+        }
+        
+        public Stream<GameObject> stream(){
+            return list.stream();
+        }
+        
     }
     
 }

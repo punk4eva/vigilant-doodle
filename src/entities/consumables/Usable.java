@@ -1,12 +1,10 @@
 
 package entities.consumables;
 
-import entities.Bullet;
 import entities.Consumable;
 import entities.GameObject;
 import entities.Hero;
 import entities.Missile;
-import entities.bosses.Boss;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;

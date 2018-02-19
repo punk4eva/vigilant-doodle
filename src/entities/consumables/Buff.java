@@ -20,7 +20,7 @@ public abstract class Buff extends Consumable{
     protected final double lvl;
     public String buffSound = "buff.wav"; 
     
-    public Buff(String na, int w, int h, long t, int l){
+    public Buff(String na, int w, int h, long t, double l){
         super(na, w, h);
         time = t;
         lvl = l;
@@ -48,18 +48,18 @@ public abstract class Buff extends Consumable{
     
     public static class SpdBuff extends Buff{
         
-        public SpdBuff(int l, long t){
+        public SpdBuff(double l, long t){
             super("Speed x"+(1.0+0.2*l), 12, 12, t, l);
         }
 
         @Override
         public void start(Hero h){
-            h.multSpeed(1 + lvl*0.2);
+            h.multSpeed(1d + lvl*0.2);
         }
 
         @Override
         public void end(Hero h){
-            h.divSpeed(1 + lvl*0.2);
+            h.divSpeed(1d + lvl*0.2);
         }
 
         @Override
@@ -220,6 +220,30 @@ public abstract class Buff extends Consumable{
             g.fillRect(x, y, width, height);
         }
         
+    }
+    
+    public static class SlownessDebuff extends Buff{
+
+        public SlownessDebuff(long t, double l){
+            super("Speed x" + (1d-l*0.2), 12, 12, t, l);
+            buffSound = null;
+        }
+
+        @Override
+        public void start(Hero h){
+            h.multSpeed(1d-lvl*0.2);
+        }
+
+        @Override
+        public void end(Hero h){
+            h.divSpeed(1d-lvl*0.2);
+        }
+
+        @Override
+        public void render(Graphics g, long frameNum){
+            g.setColor(new Color(100, (int)(frameNum/3%50)+175, 100));
+            g.fillRect(x, y, width, height);
+        }
     }
     
     public static class HpUpgrade extends Buff{

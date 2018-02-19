@@ -19,7 +19,7 @@ public class Boss extends Enemy{
     protected final BossPhase[] phases;
     protected int phaseNum = 0;
     public boolean flythroughMode = false;
-    private final static int w = Main.WIDTH/3, sy = Main.HEIGHT*6/7;
+    static final int w = Main.WIDTH/3, sy = Main.HEIGHT*6/7;
     
     public Boss(String na, double health, int x, String bgp_, BossPhase... ph){
         super(na, health, ph[0].damage, ph[0].width, ph[0].height, x, ph[0].speed, -1, -1);
@@ -72,7 +72,7 @@ public class Boss extends Enemy{
     
     protected static abstract class BossPhase extends Enemy{
 
-        private final double triggerHealth;
+        final double triggerHealth;
         private final boolean flyThrough;
         
         public BossPhase(double th, double dam, int w, int h, double sp){
@@ -93,7 +93,7 @@ public class Boss extends Enemy{
         
     }
     
-    private void paintHealthBar(Graphics g){
+    protected void paintHealthBar(Graphics g){
         g.setColor(Color.YELLOW);
         g.drawString(name, w+2, sy-20);
         g.setColor(Color.DARK_GRAY);
