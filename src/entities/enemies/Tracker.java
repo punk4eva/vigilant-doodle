@@ -3,10 +3,13 @@ package entities.enemies;
 
 import entities.Enemy;
 import entities.GameObject;
+import entities.Hero;
+import entities.Hero.ShootingMode;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import static logic.ConstantFields.courseCorrectionFactor;
+import logic.Resistance;
 
 /**
  *
@@ -17,17 +20,17 @@ public class Tracker extends Enemy{
     public GameObject target;
     
     public Tracker(GameObject targ){
-        super("Tracker", 40, 5, 32, 32, 1, 1.5, 7.0, Integer.MAX_VALUE);
+        super("Tracker", 40, 5, 32, 32, 1, 1.5, 7.0, Integer.MAX_VALUE, new Resistance(ShootingMode.SHOTGUN, 0.94));
         target = targ;
     }
     
     public Tracker(GameObject targ, int level){
-        super("Tracker", 10+10*level, 4+2*level, 32, 32, 1, level*1.5, 7.0, Integer.MAX_VALUE);
+        super("Tracker", 10+10*level, 4+2*level, 32, 32, 1, level*1.5, 7.0, Integer.MAX_VALUE, new Resistance(ShootingMode.SHOTGUN, 0.94));
         target = targ;
     }
     
-    protected Tracker(String name, double health, double damage, int w, int h, int xp, double sp, GameObject targ, double ms, double md){
-        super(name, health, damage, w, h, xp, sp, ms, md);
+    protected Tracker(String name, double health, double damage, int w, int h, int xp, double sp, GameObject targ, double ms, double md, Resistance res){
+        super(name, health, damage, w, h, xp, sp, ms, md, res);
         target = targ;
     }
 

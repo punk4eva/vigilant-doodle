@@ -36,9 +36,11 @@ import yoisupiru.Window;
 public class Hero extends GameObject implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
     
     public int level = 1;
-    public double speed = 3.0;
+    public double speed = 3.0, defenseBonus = 1.0;
+    public boolean slow = false;
     public final double MAXSPEED = 4.5;
     private final double IMMUNITYLENGTH;
+    private boolean shooting = false;
     public int xp = 0, maxxp = 5;
     public double regen = 0.01;
     public double invulnerability = 0;
@@ -56,36 +58,43 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     private final List<Buff> buffs = new LinkedList<>();
     private final List<Usable> usables = new LinkedList<>();
     public static enum ShootingMode{
-        BURST(new Bullet(8.2, 0.8, 0.5, 1.8, 0.2)){
+        BURST(new Bullet(8.2, 0.8, 0.5, 1.8, 0.2, null)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
                 for(int n=0;n<bulletAmount*2;n+=2) handler.addObject(bullet.create((int)(sx+vx*n), (int)(sy+vy*n), vx, vy, m));
             }
         },
-        SHOTGUN(new Bullet(7, 4, 0.25, 2.5, 0.18)){
+        SHOTGUN(new Bullet(7, 4, 0.25, 2.5, 0.18, null)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
                 for(int n=-bulletAmount/2;n<bulletAmount/2+1;n++) handler.addObject(bullet.create(sx, sy, vx, vy, m));
             }            
         },
-        CONSTANT(new Bullet(7, 1, 1, 0.2, 0.2)){
+        CONSTANT(new Bullet(7, 1, 1, 0.2, 0.2, null)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
                 handler.addObject(bullet.create(sx, sy, vx, vy, m));
             }
         },
-        MACHINE(new Bullet(14, 0.7, 2, 0.4, 0.2)){
+        MACHINE(new Bullet(14, 0.7, 2, 0.4, 0.2, null)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
                 handler.addObject(bullet.create(sx, sy, vx, vy, m));
             }
         },
-        GRENADE(new CooldownHomingBullet(2, 40, 0.125, 6.0, 0.15, null)){
+        MISSILE(new CooldownHomingBullet(2, 40, 0.125, 6.0, 0.15, null)){
             @Override
             void shoot(int sx, int sy, double vx, double vy, Handler handler, float m){
                 handler.addObject(((HomingBullet)bullet).create(sx, sy, vx, vy, m, findNearestEnemy(handler, handler.hero)));
             }
         };
+        static{
+            BURST.bullet.mode = BURST;
+            SHOTGUN.bullet.mode = SHOTGUN;
+            CONSTANT.bullet.mode = CONSTANT;
+            MACHINE.bullet.mode = MACHINE;
+            MISSILE.bullet.mode = MISSILE;
+        }
         
         public final Bullet bullet;
         private int level = 0;
@@ -135,15 +144,18 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
                 IMMUNITYLENGTH = 0.8;
                 damageMult = 1.1f;
                 damageAbsorption = 0.3;
+                defenseBonus = 0.85;
                 break;
             case "Normal":
                 regen = 0.015;
                 IMMUNITYLENGTH = 0.7;
                 damageAbsorption = 0.15;
+                defenseBonus = 0.88;
                 break;
             case "Hard":
                 regen = 0.01;
                 IMMUNITYLENGTH = 0.6;
+                defenseBonus = 0.94;
                 break;
             case "Brutal": default:
                 regen = 0.008;
@@ -206,7 +218,7 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     
     private Color getHealthColor(){
-        return Color.getHSBColor(0, 0.9F, (float)(hp/maxhp));
+        return Color.getHSBColor(shooting?0.11F:0.0F, 0.9F, (float)(hp/maxhp));
     }
     
     private Color getHeatColor(){
@@ -297,7 +309,8 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     @Override
     public void hurt(double dam){
         if(invulnerability<=0){
-            hp -= dam*(1-damageAbsorption);
+            if(shooting) hp -= dam*(1-damageAbsorption);
+            else hp -= dam*(1-damageAbsorption)*defenseBonus;
             invulnerability = IMMUNITYLENGTH;
         }
     }
@@ -448,16 +461,31 @@ public class Hero extends GameObject implements MouseListener, MouseMotionListen
     }
     @Override
     public void keyTyped(KeyEvent ke){
-        if(ke.getKeyChar()=='f') useUsable(Window.main.handler);
+        switch(ke.getKeyChar()){
+            case 'f': useUsable(Window.main.handler);
+                break;
+            case 'm': Window.mute();
+                break;
+            case 'b': if(Window.main.handler.getClockSpeed()==5)
+                    Window.main.handler.setClockSpeed(20);
+                else Window.main.handler.setClockSpeed(5);
+                break;
+            case 'v': Main.decider.actionPerformed(null);
+                break;
+        }
     }
     @Override
     public void keyPressed(KeyEvent ke){
         if(ke.getKeyCode()==ConstantFields.PAUSE) Window.main.pause();
-        else if(!currentKeys.contains(ke.getKeyCode())) currentKeys.add(ke.getKeyCode());
+        else if(!currentKeys.contains(ke.getKeyCode())){
+            currentKeys.add(ke.getKeyCode());
+            if(ke.getKeyCode()==ConstantFields.SHOOT) shooting = true;
+        }
     }
     @Override
     public void keyReleased(KeyEvent ke){
         currentKeys.remove(new Integer(ke.getKeyCode()));
+        if(ke.getKeyCode()==ConstantFields.SHOOT) shooting = false;
     }
     
     private void tickKeys(Handler handler){

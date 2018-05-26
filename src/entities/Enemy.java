@@ -1,6 +1,8 @@
 
 package entities;
 
+import logic.Resistance;
+
 /**
  *
  * @author Adam Whittaker
@@ -13,8 +15,8 @@ public abstract class Enemy extends GameObject{
     public final double MAXSPEED, MAXDAMAGE;
     public boolean forced = false;
 
-    public Enemy(String na, double health, double dam, int w, int h, int x, double sp, double ms, double md){
-        super(na, health, w, h);
+    public Enemy(String na, double health, double dam, int w, int h, int x, double sp, double ms, double md, Resistance res){
+        super(na, health, w, h, res);
         xp = x;
         MAXSPEED = ms;
         MAXDAMAGE = md;

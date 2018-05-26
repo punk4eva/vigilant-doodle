@@ -1,6 +1,7 @@
 
 package entities;
 
+import entities.Hero.ShootingMode;
 import entities.bosses.Boss;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,10 +20,12 @@ public class Bullet extends GameObject{
     public double reloadSpeed;
     public double bulletHeat;
     public double cooldownSpeed;
+    public ShootingMode mode;
     
-    public Bullet(double bs, double dam, double rel, double ht, double cool){
+    public Bullet(double bs, double dam, double rel, double ht, double cool, ShootingMode m){
         super("bullet", 5, 6, 6);
         bulletSpeed = bs;
+        mode = m;
         damage = dam;
         reloadSpeed = rel;
         bulletHeat = ht;
@@ -53,12 +56,15 @@ public class Bullet extends GameObject{
             if(!(ob instanceof NonCollidable)) updateBothVelocities(ob);
         }else if(!(ob instanceof NonCollidable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
             hp = -1;
-            ob.hurt(damage);
+            try{
+                if(ob.resistance.mode.equals(mode)) ob.hurt(damage*ob.resistance.mult);
+                else ob.hurt(damage);
+            }catch(NullPointerException e){ob.hurt(damage);}
         }
     }
     
     public Bullet create(int sx, int sy, double vx, double vy){
-        Bullet b = new Bullet(bulletSpeed, damage, reloadSpeed, bulletHeat, cooldownSpeed);
+        Bullet b = new Bullet(bulletSpeed, damage, reloadSpeed, bulletHeat, cooldownSpeed, mode);
         b.x = sx;
         b.y = sy;
         b.velx = vx;
@@ -67,7 +73,7 @@ public class Bullet extends GameObject{
     }
     
     public Bullet create(int sx, int sy, double vx, double vy, float mult){
-        Bullet b = new Bullet(bulletSpeed, damage*mult, reloadSpeed, bulletHeat, cooldownSpeed);
+        Bullet b = new Bullet(bulletSpeed, damage*mult, reloadSpeed, bulletHeat, cooldownSpeed, mode);
         b.x = sx;
         b.y = sy;
         b.velx = vx;

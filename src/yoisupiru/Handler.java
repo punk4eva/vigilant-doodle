@@ -7,6 +7,7 @@ import entities.Enemy;
 import entities.GameObject;
 import entities.Hero;
 import entities.bosses.Boss;
+import entities.bosses.Boss.NonClearable;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +19,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.Timer;
+import logic.BackgroundEffect.EffectManager;
 import static logic.ConstantFields.mobCap;
 import static logic.ConstantFields.consCap;
 import logic.Twin;
@@ -33,6 +35,7 @@ public class Handler implements ActionListener{
     private final Timer timer;
     public final Hero hero;
     private volatile LinkedBlockingQueue<Runnable> queuedEvents = new LinkedBlockingQueue<>();
+    private final EffectManager background = new EffectManager(14, 0.05);
     private int mobNum = 0, consNum = 0;
     
     public Handler(Hero h){
@@ -98,6 +101,8 @@ public class Handler implements ActionListener{
     }
     
     public void render(Graphics g, long frameNum){
+        if(Main.decider.boss) background.paint(g);
+        else background.paintAndTick(g);
         synchronized(objects){
             objects.stream().filter(o -> o.alive).forEach((o) -> {
                 o.render(g, frameNum);
@@ -144,15 +149,25 @@ public class Handler implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent ae){
-        synchronized(objects){
-            objects.stream().filter(o -> o.alive).forEach(o -> {
-                o.tick(this);
-            });
-            objects.stream().forEach(o -> {
-                collisionDetection(o);
-            });
-        }
-        Main.frameNumber+=0.3;
+        //if(!hero.slow||(tickNum++)%4==0){
+            synchronized(objects){
+                objects.stream().filter(o -> o.alive).forEach(o -> {
+                    o.tick(this);
+                });
+                objects.stream().forEach(o -> {
+                    collisionDetection(o);
+                });
+            }
+            Main.frameNumber+=0.3;
+        //}
+    }
+    
+    public void setClockSpeed(int sp){
+        timer.setDelay(sp);
+    }
+    
+    public int getClockSpeed(){
+        return timer.getDelay();
     }
     
     public void pause(){
@@ -165,7 +180,7 @@ public class Handler implements ActionListener{
             synchronized(objects){
                 for(Iterator<GameObject> iter=objects.iterator();iter.hasNext();){
                     GameObject ob = iter.next();
-                    if(ob instanceof Enemy){
+                    if(ob instanceof Enemy && !(ob instanceof NonClearable)){
                         timer.removeActionListener(ob);
                         iter.remove();
                         mobNum--;

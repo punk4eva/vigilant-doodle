@@ -3,6 +3,8 @@ package entities.enemies;
 
 import entities.Enemy;
 import entities.GameObject;
+import entities.Hero;
+import entities.Hero.ShootingMode;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import static logic.ConstantFields.courseCorrectionFactor;
+import logic.Resistance;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 
@@ -24,7 +27,7 @@ public class Tank extends Enemy{
     public double clock = 0;
     
     public Tank(int level, GameObject targ, Handler hand){
-        super("Tank", 40+40*level, 20+5*level, 80, 80, 4, (double)level/4.5d, 1.8, 115);
+        super("Tank", 40+40*level, 20+5*level, 80, 80, 4, (double)level/4.5d, 1.8, 115, new Resistance(ShootingMode.BURST, 0.76));
         target = targ;
         handler = hand;
     }

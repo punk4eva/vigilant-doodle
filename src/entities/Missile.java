@@ -19,7 +19,7 @@ public class Missile extends Bullet implements NonCollidable{
     private final TrailGenerator trail;
     
     public Missile(double bs, double dam, double rel, double ht, double cool){
-        super(bs, dam, rel, ht, cool);
+        super(bs, dam, rel, ht, cool, null);
         width = 9;
         height = 9;
         trail = new TrailGenerator(4, 2, 6, 9, 9, 240, 20, 20);
@@ -47,7 +47,10 @@ public class Missile extends Bullet implements NonCollidable{
             }
         } else if (!(ob instanceof NonCollidable) && !(ob instanceof Boss && ((Boss) ob).flythroughMode)) {
             hp = -1;
-            ob.hp -= damage;
+            try{
+                if(ob.resistance.mode.equals(mode)) ob.hurt(damage*ob.resistance.mult);
+                else ob.hurt(damage);
+            }catch(NullPointerException e){ob.hurt(damage);}
         }
     }
     

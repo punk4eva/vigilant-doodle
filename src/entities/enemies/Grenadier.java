@@ -2,6 +2,8 @@
 package entities.enemies;
 
 import entities.GameObject;
+import entities.Hero;
+import entities.Hero.ShootingMode;
 import entities.HomingBullet;
 import entities.HomingBullet.HealthyHomingBullet;
 import java.awt.Color;
@@ -10,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
+import logic.Resistance;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 
@@ -20,7 +23,7 @@ import yoisupiru.Handler;
 public class Grenadier extends Shooter{
     
     public Grenadier(double level, GameObject targ, Handler hand){
-        super("Grenadier", 18+4d*level, 2*level, 32, 32, 5, level/4.0d, targ, hand, 2.3, 26);
+        super("Grenadier", 18+4d*level, 2*level, 32, 32, 5, level/4.0d, targ, hand, 2.3, 26, new Resistance(ShootingMode.CONSTANT, 0.9));
         bullet = new HealthyHomingBullet(5+2d*level, 4, 1.0+0.05*level, 5+5d*level, -1, -1, -1, targ);
     }
     

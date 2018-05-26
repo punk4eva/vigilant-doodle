@@ -6,6 +6,7 @@ import entities.Fire;
 import entities.GameObject;
 import entities.Goo;
 import entities.Hero;
+import entities.Hero.ShootingMode;
 import entities.HomingBullet.HealthyHomingBullet;
 import entities.consumables.Buff.FireDebuff;
 import entities.consumables.Buff.SlownessDebuff;
@@ -25,6 +26,7 @@ import static logic.ConstantFields.hp32;
 import static logic.ConstantFields.hp33;
 import static logic.ConstantFields.hp34;
 import logic.NonCollidable;
+import logic.Resistance;
 import logic.Twin;
 import yoisupiru.Decider;
 import static yoisupiru.Decider.r;
@@ -46,7 +48,7 @@ public class TheTwins extends Boss implements Twin{
     private static List<GameObject> twinList;
     
     public TheTwins(Hero targ, Handler h){
-        super("The Twins", 1, 60, "The_Twins.wav", new BossPhase(-1, -1, -1, -1, -1){
+        super("The Twins", 1, 60, "The_Twins.wav", new BossPhase(-1, -1, -1, -1, -1, null){
             @Override
             public void render(Graphics g, long frameNum){
                 throw new UnsupportedOperationException("Trying to render nonexistance.");
@@ -198,7 +200,7 @@ public class TheTwins extends Boss implements Twin{
     
     private static class TheRavager extends Boss{
         
-        static final Fire fire = new Fire(18.0, 2, -1, -1, -1, -1, Math.PI/10d, 150, 5000, 3);
+        static final Fire fire = new Fire(18.0, 2, -1, -1, -1, -1, Math.PI/10d, 75, 5000, 3);
 
         public TheRavager(){
             super("The Ravager", hp31+hp32, 0, "Why are you playing the Ravager?", new RPhase1(), new RPhase2());
@@ -208,7 +210,7 @@ public class TheTwins extends Boss implements Twin{
         static class RPhase1 extends BossPhase{
 
             public RPhase1(){
-                super(-1, -5, 80, 70, 9.0);
+                super(-1, -5, 80, 70, 9.0, new Resistance(ShootingMode.MACHINE, 0.85));
                 velx = (r.nextDouble()*2d*speed)-speed;
                 vely = (r.nextDouble()*2d*speed)-speed;
             }
@@ -222,6 +224,9 @@ public class TheTwins extends Boss implements Twin{
                 if(ob instanceof Hero){
                     if(ob.hp+5>ob.maxhp) ob.hp = ob.maxhp;
                     else ob.hp += 5;
+                }else if(ob instanceof Bullet && ob.hp>0){
+                    ob.hp = -1;
+                    ravager.hp-=((Bullet) ob).damage*(1d + r.nextDouble()*(0.5+(target.isOnFire()?0:0.5)));
                 }
             }
             
@@ -230,8 +235,16 @@ public class TheTwins extends Boss implements Twin{
             }
             
             void courseCorrection(){
-                double dist = 4d*(Math.min(y, Main.HEIGHT-y) + Math.min(x, Main.WIDTH-x))/scsize;
-                velAngleChange(-dist*Math.PI/18d);
+                double t = obtuseAtan((double)target.x-(double)x,(double)target.y-(double)y);
+                double f = obtuseAtan(velx, vely);
+                double mult = 1;
+                if(f>t){
+                    if(f-t<=t+2*Math.PI-f) mult = -1;
+                }else{
+                    if(t-f>f+2*Math.PI-t) mult = -1;
+                }
+                if(distMult()>0.7) mult = -mult;
+                velAngleChange(mult*Math.PI/18d);
             }
             
             @Override
@@ -256,6 +269,9 @@ public class TheTwins extends Boss implements Twin{
                     fire.y = (int)c[1];
                     fire.velx = c[2];
                     fire.vely = c[3];
+                    if(clock==1){
+                        handler.addObject(fire);
+                    }
                 }
                 if(clock>=waitPeriod){
                     waitPeriod = (long)(Decider.r.nextDouble()*2000d/distMult());
@@ -294,7 +310,7 @@ public class TheTwins extends Boss implements Twin{
             long waitPeriod = (long)(Decider.r.nextDouble()*850);
 
             public RPhase2(){
-                super(hp32, 30, 80, 70, 7.5);
+                super(hp32, 30, 80, 70, 7.5, new Resistance(ShootingMode.CONSTANT, 0.8));
                 velx = (r.nextDouble()*2d*speed)-speed;
                 vely = (r.nextDouble()*2d*speed)-speed;
             }
@@ -322,6 +338,7 @@ public class TheTwins extends Boss implements Twin{
             public void render(Graphics ig, long frameNum){
                 Graphics2D g = (Graphics2D) ig;
                 int now = (int)((1d-((System.currentTimeMillis()-spawnTime)/60000d))*250d);
+                now = now>255?255:(now<0?0:now);
                 double r1 = -((double)frameNum/2)%(2*Math.PI), r2 = ((double)frameNum/2.5)%(2*Math.PI);
                 AffineTransform at1 = AffineTransform.getRotateInstance(r1, x+width/2, y+height/2),
                         at2 = AffineTransform.getRotateInstance(r2, x+width/2, y+height/2);
@@ -333,6 +350,14 @@ public class TheTwins extends Boss implements Twin{
                 Rectangle rect = new Rectangle(x+36, y+15, 8, 40);
                 g.fill(at2.createTransformedShape(rect));
                 g.fill(at1.createTransformedShape(rect));
+            }
+            
+            @Override
+            public void collision(GameObject ob){
+                if(ob instanceof Bullet && ob.hp>0){
+                    ob.hp = -1;
+                    ravager.hp-=((Bullet) ob).damage;
+                }
             }
             
         }
@@ -361,6 +386,12 @@ public class TheTwins extends Boss implements Twin{
         public void render(Graphics g, long frameNum){
             phases[phaseNum].render(g, frameNum);
         }
+        
+        @Override
+        public void die(Handler h){
+            super.die(h);
+            twinList.remove(ravager);
+        }
     
     }
     
@@ -388,7 +419,7 @@ public class TheTwins extends Boss implements Twin{
             long waitPeriod = (long)(Decider.r.nextDouble()*850);
 
             public DPhase1(double sp){
-                super(-1, 10, 80, 70, sp);
+                super(-1, 10, 80, 70, sp, new Resistance(ShootingMode.BURST, 0.72));
                 velx = (r.nextDouble()*2d*speed)-speed;
                 vely = (r.nextDouble()*2d*speed)-speed;
             }
@@ -403,7 +434,7 @@ public class TheTwins extends Boss implements Twin{
                 if(clock>=waitPeriod){
                     waitPeriod = (long)(Decider.r.nextDouble()*850);
                     long now = System.currentTimeMillis() - spawnTime;
-                    if(r.nextInt(1)==0){
+                    if(r.nextInt(4)==0){
                         double c[] = getShootVelocity(x+width/2, y+height/2, bullet.bulletSpeed);
                         handler.addObject(bullet.create((int)c[0], (int)c[1], c[2], c[3], target));
                     }else{
@@ -439,12 +470,12 @@ public class TheTwins extends Boss implements Twin{
             public void collision(GameObject ob){
                 if(ob instanceof Hero){
                     ob.hurt(damage);
-                }else if(ob instanceof Bullet){
+                }else if(ob instanceof Bullet && ob.IDOfRitchocket!=ID && !(ob instanceof HealthyHomingBullet)){
                     if(r.nextInt(4)==0){
                         updateOtherVelocity(ob);
-                    }else{
+                    }else if(ob.hp>0){
+                        devastator.hp-=((Bullet)ob).damage*(0.65+r.nextDouble()*0.35);
                         ob.hp = -1;
-                        devastator.hp-=((Bullet)ob).damage*(0.7+r.nextDouble()*0.3);
                     }
                 }
             }
@@ -458,20 +489,18 @@ public class TheTwins extends Boss implements Twin{
             long waitPeriod = (long)(r.nextDouble()*850);
             
             public DPhase2(double sp){
-                super(hp34, 40, 80, 70, sp);
+                super(hp34, 40, 80, 70, sp, new Resistance(ShootingMode.MISSILE, 0.77));
                 velx = (r.nextDouble()*2d*speed)-speed;
                 vely = (r.nextDouble()*2d*speed)-speed;
+                x = r.nextInt(Main.WIDTH);
+                y = r.nextInt(Main.HEIGHT);
             }
             
             void circle(){
-                if(clock==25){
-                    double now = System.currentTimeMillis() - startTime;
-                    double[] c = getShootVelocity(x+width/2, y+height/2, 3d+r.nextDouble()+now/200000L);
-                    velx = c[2];
-                    vely = c[3];
-                    velAngleChange(Math.PI/2d);
+                if(clock%3==0){
+                    setVelAngle(obtuseAtan(target.x-x, target.y-y));
+                    velAngleChange(Math.PI/2);
                 }
-                velAngleChange(Math.PI/16d);
             }
 
             void lunge(){
@@ -513,6 +542,14 @@ public class TheTwins extends Boss implements Twin{
                             velx = vely/gradient;
                         }
                     }
+                }
+            }
+            
+            @Override
+            public void collision(GameObject ob){
+                if(ob instanceof Bullet && ob.hp>0){
+                    ob.hp = -1;
+                    devastator.hp-=((Bullet) ob).damage;
                 }
             }
             
@@ -573,6 +610,12 @@ public class TheTwins extends Boss implements Twin{
             phases[phaseNum].render(g, frameNum);
         }
         
+        @Override
+        public void die(Handler h){
+            super.die(h);
+            twinList.remove(devastator);
+        }
+        
     }
     
     private static class BouncingTrap extends SlownessDebuff{
@@ -602,9 +645,10 @@ public class TheTwins extends Boss implements Twin{
     @Override
     public void drop(Handler hand){
         Usable u;
-        switch(Decider.r.nextInt(3)){
+        switch(Decider.r.nextInt(4)){
             case 0: u = new Usable.HealingPotion(12); break;
             case 1: u = new Usable.Shield(12); break;
+            case 2: u = new Usable.Hourglass(12); break;
             default: u = new Usable.DeathMissile(12); break;
         }
         u.x = x+width/2-u.width/2;

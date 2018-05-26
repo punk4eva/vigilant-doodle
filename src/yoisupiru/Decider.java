@@ -28,7 +28,7 @@ public class Decider implements ActionListener, KeyListener{
     public int level = 1;
     private final Handler handler;
     private String mode = "Normal";
-    private boolean boss;
+    protected boolean boss;
     public static final Random r = new Random();
     
     public Decider(Main main){
@@ -97,9 +97,11 @@ public class Decider implements ActionListener, KeyListener{
             case "Eviscerator": return new TheEviscerator(handler, handler.hero);
             case "Incinerator": return new TheIncinerator(handler, handler.hero);
             case "Twins": return new TheTwins(handler.hero, handler);
+            case "Scavenger": return new TheScavenger(handler, handler.hero);
             default: if(level==4) return new TheEviscerator(handler, handler.hero);
                 if(level==8) return new TheIncinerator(handler, handler.hero);
                 if(level==12) return new TheTwins(handler.hero, handler);
+                if(level==16) return new TheScavenger(handler, handler.hero);
                 if(r.nextInt(2+level)<level){
                     if(level<3||r.nextInt(4+level)>level) return new Shooter(level, handler.hero, handler);
                     else if(level<7||r.nextInt(5+level)>level) return new Gunner(level, handler.hero, handler);
@@ -117,7 +119,7 @@ public class Decider implements ActionListener, KeyListener{
             case 0: return ShootingMode.CONSTANT;
             case 1: return ShootingMode.MACHINE;
             case 2: return ShootingMode.BURST;
-            case 3: return ShootingMode.GRENADE;
+            case 3: return ShootingMode.MISSILE;
             default: return ShootingMode.SHOTGUN;
         }
     }
@@ -177,6 +179,7 @@ public class Decider implements ActionListener, KeyListener{
             case '5': mode = "Eviscerator"; break;
             case '6': mode = "Incinerator"; break;
             case '7': mode = "Twins"; break;
+            case '8': mode = "Scavenger"; break;
             case 'o': Window.increaseVolume(); break;
             case 'l': Window.decreaseVolume(); break;
         }

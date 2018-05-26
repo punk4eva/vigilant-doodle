@@ -26,7 +26,7 @@ public class Fire extends Enemy{
 
 
     public Fire(double dam, int lvl, int _x, int _y, double vx, double vy, double to, int len, int dur, int in){
-        super("Fire", 1, dam, -1, -1, 0, 7.0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        super("Fire", 1, dam, -1, -1, 0, 7.0, Integer.MAX_VALUE, Integer.MAX_VALUE, null);
         velx = vx;
         vely = vy;
         forced = true;

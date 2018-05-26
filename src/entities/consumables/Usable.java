@@ -5,6 +5,7 @@ import entities.Consumable;
 import entities.GameObject;
 import entities.Hero;
 import entities.Missile;
+import entities.consumables.Buff.TimeBuff;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -198,6 +199,29 @@ public abstract class Usable extends Consumable{
         @Override
         public void render(Graphics g, long frameNum){
             g.setColor(new Color((int)(frameNum%100), 213, 199));
+            g.fillOval(x, y, width, height);
+        }
+        
+    }
+    
+    public static class Hourglass extends Usable{
+        
+        int time;
+        
+        public Hourglass(int lvl){
+            super("Hourglass", 18, 18);
+            time = lvl * 3200;
+        }
+
+        @Override
+        public void use(Handler ha, Hero h, int ax, int ay){
+            h.addBuff(new TimeBuff(time));
+        }
+
+        @Override
+        public void render(Graphics g, long frameNum){
+            g.setColor(new Color((int)(frameNum/2%100)+100, 113, 249));
+            g.fillOval(x, y, width, height);
         }
         
     }

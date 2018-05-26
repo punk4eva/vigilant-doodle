@@ -124,16 +124,20 @@ public class Main extends Canvas implements Runnable, MouseListener{
         g.drawString(" * Deal 10% more damage", WIDTH/3+32, 110);
         g.drawString(" * Enemies deal 70% damage", WIDTH/3+32, 130);
         g.drawString(" * Much longer immunity length", WIDTH/3+232, 90);
+        g.drawString(" * 15% standing defense", WIDTH/3+232, 110);
         g.drawString("NORMAL", WIDTH/3+32, 190);
         g.drawString(" * 150% regeneration speed", WIDTH/3+32, 210);
         g.drawString(" * Longer immunity length", WIDTH/3+32, 230);
         g.drawString(" * Enemies deal 85% damage", WIDTH/3+32, 250);
+        g.drawString(" * 12% standing defense", WIDTH/3+232, 210);
         g.drawString("HARD", WIDTH/3+32, 310);
         g.drawString(" * 100% regeneration speed", WIDTH/3+32, 330);
         g.drawString(" * Enemies deal full damage", WIDTH/3+32, 350);
+        g.drawString(" * 6% standing defense", WIDTH/3+32, 370);
         g.drawString("BRUTAL", WIDTH/3+32, 430);
         g.drawString(" * 80% regeneration speed", WIDTH/3+32, 450);
         g.drawString(" * Shorter immunity length", WIDTH/3+32, 470);
+        g.drawString(" * No standing defense", WIDTH/3+32, 490);
     }
     
     private void paintDeathMessage(Graphics g){

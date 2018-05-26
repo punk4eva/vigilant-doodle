@@ -4,6 +4,7 @@ package entities.bosses;
 import entities.Bullet;
 import entities.GameObject;
 import entities.Hero;
+import entities.Hero.ShootingMode;
 import entities.Missile;
 import entities.consumables.Buff;
 import entities.consumables.Usable;
@@ -20,6 +21,7 @@ import java.util.LinkedList;
 import logic.ConstantFields;
 import static logic.ConstantFields.courseCorrectionFactor;
 import logic.NonCollidable;
+import logic.Resistance;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -46,9 +48,10 @@ public class TheEviscerator extends Boss{
     public void drop(Handler hand){
         ((Phase3) phases[2]).disarmTraps();
         Usable u;
-        switch(Decider.r.nextInt(3)){
+        switch(Decider.r.nextInt(4)){
             case 0: u = new HealingPotion(4); break;
             case 1: u = new Shield(4); break;
+            case 2: u = new Hourglass(4); break;
             default: u = new DeathMissile(4); break;
         }
         u.x = x+width/2-u.width/2;
@@ -64,7 +67,7 @@ public class TheEviscerator extends Boss{
         long waitPeriod = (long)(Decider.r.nextDouble()*850);
         
         public Phase1(GameObject targ, double dam, double sp){
-            super(-1, dam, 160, 160, sp);
+            super(-1, dam, 160, 160, sp, new Resistance(ShootingMode.BURST, 0.8));
             target = targ;
         }
 
@@ -237,7 +240,7 @@ public class TheEviscerator extends Boss{
         private long spawnTime = -1;
         
         public Phase2(Handler h, GameObject targ, double th, double actHealth){
-            super(th, 3, 120, 120, 0.5, true);
+            super(th, 3, 120, 120, 0.5, true, null);
             target = targ;
             handler = h;
             healthPerMinion = actHealth/4d;
@@ -426,12 +429,12 @@ public class TheEviscerator extends Boss{
             final int minionNum;
 
             public Minion(int mN){
-                super("Evisceration Machine", Phase2.this.healthPerMinion, mN, 48, 48, 0, 2.75+0.25*mN, Phase2.this.target, Phase2.this.handler, 10000, 10000);
+                super("Evisceration Machine", Phase2.this.healthPerMinion, mN, 48, 48, 0, 2.75+0.25*mN, Phase2.this.target, Phase2.this.handler, 10000, 10000, new Resistance(ShootingMode.values()[Decider.r.nextInt(5)], 1.0-(double)mN*0.1));
                 minionNum = mN;
                 forced = true;
                 x = Phase2.this.x;
                 y = Phase2.this.y;
-                bullet = new Bullet(8+mN, 3+5*mN, -1, -1, -1);
+                bullet = new Bullet(8+mN, 3+5*mN, -1, -1, -1, ShootingMode.MACHINE);
             }
             
             @Override
@@ -481,7 +484,7 @@ public class TheEviscerator extends Boss{
         private LinkedList<Trap> traps = new LinkedList<>();
         
         public Phase3(Handler h, GameObject targ, double th, double dam, double sp){
-            super(th, dam, 150, 150, sp);
+            super(th, dam, 150, 150, sp, new Resistance(ShootingMode.SHOTGUN, 0.7));
             target = targ;
             handler = h;
         }

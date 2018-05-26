@@ -4,6 +4,8 @@ package entities.enemies;
 import entities.Bullet;
 import entities.Enemy;
 import entities.GameObject;
+import entities.Hero;
+import entities.Hero.ShootingMode;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,6 +13,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import static logic.ConstantFields.courseCorrectionFactor;
+import logic.Resistance;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -27,15 +30,15 @@ public class Shooter extends Enemy{
     public double clock = 0;
 
     public Shooter(int level, GameObject targ, Handler hand){
-        super("Shooter", 12+12*level, 0, 48, 48, 2, level*2, 4.5, 0);
+        super("Shooter", 12+12*level, 0, 48, 48, 2, level*2, 4.5, 0, new Resistance(ShootingMode.CONSTANT, 0.88));
         target = targ;
         handler = hand;
         int bd = 5+4*level;
-        bullet = new Bullet(4+level, bd<45?bd:45, -1, -1, -1);
+        bullet = new Bullet(4+level, bd<45?bd:45, -1, -1, -1, ShootingMode.CONSTANT);
     }
     
-    protected Shooter(String name, double health, double damage, int w, int h, int xp, double sp, GameObject targ, Handler hand, double ms, double md){
-        super(name, health, damage, w, h, xp, sp, ms, md);
+    protected Shooter(String name, double health, double damage, int w, int h, int xp, double sp, GameObject targ, Handler hand, double ms, double md, Resistance res){
+        super(name, health, damage, w, h, xp, sp, ms, md, res);
         target = targ;
         handler = hand;
     }
@@ -67,10 +70,10 @@ public class Shooter extends Enemy{
 
     void velTick(){
         if(Math.abs(velx)<speed){
-            velx *= Decider.r.nextDouble() * 3 * (Math.abs(target.x-x))/Main.WIDTH;
+            velx *= Decider.r.nextDouble() * 3d * (double)(Math.abs(target.x-x))/Main.WIDTH;
         }
         if(Math.abs(vely)<speed){
-            vely *= Decider.r.nextDouble() * 3 * (Math.abs(target.y-y))/Main.HEIGHT;
+            vely *= Decider.r.nextDouble() * 3d * (double)(Math.abs(target.y-y))/Main.HEIGHT;
         }
         courseCorrection();
     }

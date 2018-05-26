@@ -22,7 +22,7 @@ public class HomingBullet extends Bullet{
     GameObject target;
     
     public HomingBullet(double bs, double dam, double rel, double ht, double cool, GameObject targ){
-        super(bs, dam, rel, ht, cool);
+        super(bs, dam, rel, ht, cool, null);
         target = targ;
     }
     
@@ -140,7 +140,10 @@ public class HomingBullet extends Bullet{
                 hp -= ((Bullet)ob).damage;
             }else if(!(ob instanceof NonCollidable)&&!(ob instanceof Boss&&((Boss) ob).flythroughMode)){
                 hp = -1;
-                ob.hurt(damage);
+                try{
+                    if(ob.resistance.mode.equals(mode)) ob.hurt(damage*ob.resistance.mult);
+                    else ob.hurt(damage);
+                }catch(NullPointerException e){ob.hurt(damage);}
                 if(ob instanceof Hero) ((Hero)ob).addBuff(new FireDebuff(-1, -1, 2, 2000+Decider.r.nextInt(3001)));
             }
         }

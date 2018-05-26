@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import logic.Collision;
+import logic.Resistance;
 import yoisupiru.Handler;
 import yoisupiru.Main;
 
@@ -18,9 +19,19 @@ public abstract class GameObject extends Collision implements ActionListener{
     public volatile double hp;
     public final String name;
     public volatile boolean alive = true;
+    public Resistance resistance = null;
     
     public GameObject(String na, double health, int w, int h){
         name = na;
+        maxhp = health;
+        hp = health;
+        width = w;
+        height = h;
+    }
+    
+    public GameObject(String na, double health, int w, int h, Resistance res){
+        name = na;
+        resistance = res;
         maxhp = health;
         hp = health;
         width = w;
@@ -37,11 +48,11 @@ public abstract class GameObject extends Collision implements ActionListener{
         yChange += vely%1.0;
         if(xChange>=1){
             x += velx + 1;
-            xChange %= 1.0;
+            xChange--;
         }else x += velx;
         if(yChange>=1){
             y += vely + 1;
-            yChange %= 1.0;
+            yChange--;
         }else y += vely;
     }
     

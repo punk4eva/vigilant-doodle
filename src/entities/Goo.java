@@ -18,7 +18,7 @@ public class Goo extends Bullet implements NonCollidable{
     private final double lvl;
     
     public Goo(int num, double l){
-        super(-1, 0, -1, -1, -1);
+        super(-1, 0, -1, -1, -1, null);
         hp = 8;
         number = num;
         lvl = l;

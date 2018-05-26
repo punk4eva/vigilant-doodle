@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import yoisupiru.Window;
 
 /**
  *
@@ -191,6 +192,30 @@ public abstract class Buff extends Consumable{
         
     }
     
+    public static class TimeBuff extends Buff{
+
+        public TimeBuff(long t){
+            super("Slow time", 12, 12, t, 1);
+        }
+
+        @Override
+        public void start(Hero h){
+            Window.main.handler.setClockSpeed(20);
+        }
+
+        @Override
+        public void end(Hero h){
+            Window.main.handler.setClockSpeed(5);
+        }
+
+        @Override
+        public void render(Graphics g, long frameNum){
+            g.setColor(new Color((int)(frameNum/2%100)+100, 113, 249));
+            g.fillRect(x, y, width, height);
+        }
+    
+    }
+    
     public static class FireDebuff extends Buff{
         
         double prevRegen, prevMult;
@@ -205,7 +230,7 @@ public abstract class Buff extends Consumable{
             prevRegen = h.regen;
             prevMult = h.coolingMult;
             h.setRegen(0);
-            h.setCoolingMult(1.0-(lvl/5));
+            h.setCoolingMult(1.0-(0.2d*lvl));
         }
 
         @Override

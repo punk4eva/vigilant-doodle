@@ -21,6 +21,7 @@ public class SoundHandler{
     private Thread SFXThread;
     private boolean flowMode;
     private ArrayDeque<File> playlist = new ArrayDeque<>();
+    private String interrupted;
 
     public void playSFX(String path){
         File file = new File("sound/" + path);
@@ -73,6 +74,7 @@ public class SoundHandler{
     public synchronized void playFlowingLoop(String path){
         flowMode = true;
         File file = new File("sound/" + path);
+        interrupted = path;
         new Thread(() -> {
             try{
                 if(backgroundMusicLoop!=null) backgroundMusicLoop.join();
@@ -176,6 +178,10 @@ public class SoundHandler{
     public synchronized void stopBackground(){
         backgroundMusicLoop.interrupt();
         backgroundMusicLoop = null;
+    }
+    
+    public synchronized void resume(){
+        playFlowingLoop(interrupted);
     }
     
 }

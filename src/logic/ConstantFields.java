@@ -38,7 +38,9 @@ public class ConstantFields{
     public static int hp32;
     public static int hp33;
     public static int hp34;
+    public static int hp41;
     
+    public static int scavengerSegments;
     public static boolean printFields;
     public static boolean pointAndTeleport;
     public static int minSpawnDelay, spawnDelay;
@@ -62,9 +64,11 @@ public class ConstantFields{
                 else if(line.startsWith("hp32")) hp32 = Integer.parseInt(line.substring(7));
                 else if(line.startsWith("hp33")) hp33 = Integer.parseInt(line.substring(7));
                 else if(line.startsWith("hp34")) hp34 = Integer.parseInt(line.substring(7));
+                else if(line.startsWith("hp41")) hp41 = Integer.parseInt(line.substring(7));
                 else if(line.startsWith("mobCap")) mobCap = Integer.parseInt(line.substring(9));
                 else if(line.startsWith("consCap")) consCap = Integer.parseInt(line.substring(10));
                 else if(line.startsWith("graphicsQuality")) graphicsQuality = Double.parseDouble(line.substring(18));
+                else if(line.startsWith("scavengerSegments")) scavengerSegments = Integer.parseInt(line.substring(20));
                 else if(line.startsWith("meleeAccFactor")) meleeAccFactor = Double.parseDouble(line.substring(17));
                 else if(line.startsWith("meleeRotationFactor")) meleeRotationFactor = Double.parseDouble(line.substring(22));
                 else if(line.startsWith("pointAndTeleport")) pointAndTeleport = Boolean.parseBoolean(line.substring(19));
@@ -90,6 +94,8 @@ public class ConstantFields{
             System.out.println("hp32 = " + hp32);
             System.out.println("hp33 = " + hp33);
             System.out.println("hp34 = " + hp34);
+            System.out.println("hp41 = " + hp41);
+            System.out.println("scavengerSegments = " + scavengerSegments);
             System.out.println("pointAndTeleport = " + pointAndTeleport);
             System.out.println("minSpawnDelay = " + minSpawnDelay);
             System.out.println("spawnDelay = " + spawnDelay);

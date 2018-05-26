@@ -3,12 +3,15 @@ package entities.enemies;
 
 import entities.Bullet;
 import entities.GameObject;
+import entities.Hero;
+import entities.Hero.ShootingMode;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
+import logic.Resistance;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 
@@ -19,12 +22,12 @@ import yoisupiru.Handler;
 public class Gunner extends Shooter{
     
     public Gunner(int level, GameObject targ, Handler hand){
-        super("Gunner", 15*(level+1), level, 48, 48, 3, 2.75+0.25*(double)level, targ, hand, 5.5, 21);
-        bullet = new Bullet(8+level, 3+2*level, -1, -1, -1);
+        super("Gunner", 15*(level+1), level, 48, 48, 3, 2.75+0.25*(double)level, targ, hand, 5.5, 21, new Resistance(ShootingMode.BURST, 0.85));
+        bullet = new Bullet(8+level, 3+2*level, -1, -1, -1, ShootingMode.MACHINE);
     }
     
-    public Gunner(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand, double ms, double md){
-        super(name, health, damage, w, h, xp, sp, targ, hand, ms, md);
+    public Gunner(String name, double health, int damage, int w, int h, int xp, double sp, GameObject targ, Handler hand, double ms, double md, Resistance res){
+        super(name, health, damage, w, h, xp, sp, targ, hand, ms, md, res);
     }
     
     @Override

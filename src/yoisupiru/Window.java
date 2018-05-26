@@ -17,8 +17,10 @@ public class Window extends Canvas{
     
     public static Main main;
     public final JFrame frame;
-    public volatile static float SFXVolume = -3;
-    public volatile static float MusicVolume = -3;
+    public volatile static float SFXVolume = -100;
+    public volatile static float MusicVolume = -100;
+    private static float SFXVol, MusicVol;
+    private static boolean mute = false;
     
     public Window(int width, int height, String title, Main m){
         frame = new JFrame(title);
@@ -43,6 +45,22 @@ public class Window extends Canvas{
     public synchronized static void increaseVolume(){
         SFXVolume++;
         MusicVolume++;
+    }
+    
+    public synchronized static void mute(){
+        System.err.println("mute");
+        if(mute){
+            SFXVolume = SFXVol;
+            MusicVolume = MusicVol;
+            Main.soundSystem.resume();
+        }else{
+            SFXVol = SFXVolume;
+            MusicVol = MusicVolume;
+            MusicVolume = -100;
+            SFXVolume = -100;
+            Main.soundSystem.stopBackground();
+        }
+        mute = !mute;
     }
     
     public static void main(String... args){

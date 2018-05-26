@@ -4,9 +4,11 @@ package entities.enemies;
 import entities.Bullet;
 import entities.GameObject;
 import entities.Hero;
+import entities.Hero.ShootingMode;
 import entities.consumables.Buff.FireDebuff;
 import java.awt.Color;
 import java.awt.Graphics;
+import logic.Resistance;
 import yoisupiru.Decider;
 
 /**
@@ -16,7 +18,7 @@ import yoisupiru.Decider;
 public class Bomb extends Tracker{
 
     public Bomb(double level, GameObject targ){
-        super("Bomb", 25+level*3, 20+level*6, 12, 12, 2, 1+0.05*level, targ, 2.0, 47);
+        super("Bomb", 25+level*3, 20+level*6, 12, 12, 2, 1+0.05*level, targ, 2.0, 47, new Resistance(ShootingMode.MACHINE, 0.87));
     }
 
     @Override

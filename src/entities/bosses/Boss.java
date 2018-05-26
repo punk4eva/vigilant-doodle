@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import logic.Collision;
+import logic.Resistance;
 import yoisupiru.Handler;
 import yoisupiru.Main;
 
@@ -22,13 +23,15 @@ public class Boss extends Enemy{
     static final int w = Main.WIDTH/3, sy = Main.HEIGHT*6/7;
     
     public Boss(String na, double health, int x, String bgp_, BossPhase... ph){
-        super(na, health, ph[0].damage, ph[0].width, ph[0].height, x, ph[0].speed, -1, -1);
+        super(na, health, ph[0].damage, ph[0].width, ph[0].height, x, ph[0].speed, -1, -1, null);
         forced = true;
         bgp = bgp_;
         phases = ph;
         speed = ph[0].speed;
         damage = ph[0].damage;
     }
+    
+    public static interface NonClearable{}
 
     @Override
     public void render(Graphics g, long frameNum){
@@ -75,16 +78,16 @@ public class Boss extends Enemy{
         final double triggerHealth;
         private final boolean flyThrough;
         
-        public BossPhase(double th, double dam, int w, int h, double sp){
-            super(null, 1, dam, w, h, 0, sp, -1, -1);
+        public BossPhase(double th, double dam, int w, int h, double sp, Resistance res){
+            super(null, 1, dam, w, h, 0, sp, -1, -1, res);
             triggerHealth = th;
             speed = sp;
             damage = dam;
             flyThrough = false;
         }
         
-        public BossPhase(double th, double dam, int w, int h, double sp, boolean f){
-            super(null, 1, dam, w, h, 0, sp, -1, -1);
+        public BossPhase(double th, double dam, int w, int h, double sp, boolean f, Resistance res){
+            super(null, 1, dam, w, h, 0, sp, -1, -1, res);
             speed = sp;
             damage = dam;
             triggerHealth = th;

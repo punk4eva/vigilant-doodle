@@ -6,6 +6,7 @@ import entities.Fire;
 import entities.Fire.LowLagFire;
 import entities.GameObject;
 import entities.Hero;
+import entities.Hero.ShootingMode;
 import entities.consumables.Buff;
 import entities.consumables.Usable;
 import entities.enemies.Bomb;
@@ -19,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import logic.Collision;
 import logic.ConstantFields;
+import logic.Resistance;
 import yoisupiru.Decider;
 import yoisupiru.Handler;
 import yoisupiru.Main;
@@ -53,11 +55,17 @@ public class TheIncinerator extends Boss{
     }
     
     @Override
+    public void hurt(double dam){
+        hp -= (1.0-madnessCoefficient())*dam;
+    }
+    
+    @Override
     public void drop(Handler hand){
         Usable u;
-        switch(Decider.r.nextInt(3)){
+        switch(Decider.r.nextInt(4)){
             case 0: u = new Usable.HealingPotion(8); break;
             case 1: u = new Usable.Shield(8); break;
+            case 2: u = new Usable.Hourglass(8); break;
             default: u = new Usable.DeathMissile(8); break;
         }
         u.x = x+width/2-u.width/2;
@@ -83,7 +91,7 @@ public class TheIncinerator extends Boss{
         protected final GameObject target;
         
         SharedState(double th, Handler h, GameObject targ){
-            super(th, Integer.MAX_VALUE, Main.WIDTH, 50, -1);
+            super(th, Integer.MAX_VALUE, Main.WIDTH, 50, -1, new Resistance(ShootingMode.BURST, 0.65));
             handler = h;
             target = targ;
         }
@@ -388,12 +396,12 @@ public class TheIncinerator extends Boss{
         }
         
         void startWait(){
-            clock = 500 + Decider.r.nextInt(201)-(int)(500d*madnessCoefficient());
+            clock = 600 + Decider.r.nextInt(201)-(int)(600d*madnessCoefficient());
             fireMode = "WaitingToExtend";
         }
         
         void updateWall(){
-            yChange+=0.03*madnessCoefficient();
+            yChange+=0.02*madnessCoefficient();
             if(yChange>=1.0){
                 yChange--;
                 wall.setY(wallHeight+=1);
@@ -415,7 +423,7 @@ public class TheIncinerator extends Boss{
             if(xChange>=1.0){
                 wallLength++;
                 wall.setLength(wallLength);
-                xChange++;
+                xChange--;
                 if(wallLength>=250) fireMode = "Waiting";
             }
         }
@@ -527,14 +535,14 @@ public class TheIncinerator extends Boss{
     private static class FuelTank extends Enemy{
 
         public FuelTank(int ex, int ey){
-            super("Fuel Tank", 550, 0, 40, 60, 0, 0, 0, 0);
+            super("Fuel Tank", 550, 0, 40, 60, 0, 0, 0, 0, new Resistance(ShootingMode.MISSILE, 0.5));
             x = ex;
             y = ey;
         }
         
         @Override
         public synchronized void tick(Handler handler){
-            if(hp<maxhp) hp+=0.05;
+            if(hp<maxhp) hp+=0.03;
         }
         
         @Override
@@ -556,8 +564,8 @@ public class TheIncinerator extends Boss{
     }
     
     private static double madnessCoefficient(){
-            return fuelTank.hp/fuelTank.maxhp;
-        }
+        return fuelTank.hp/fuelTank.maxhp;
+    }
         
     private static double getRotationAngle(){
         return Math.PI/(840d/(madnessCoefficient()+1.0)-240d);
@@ -579,14 +587,6 @@ public class TheIncinerator extends Boss{
         GameObject ob = handler.getBullet();
         if(ob==null) return 0;
         return 7d*getAngleForCoords(ob.x, ob.y);
-    }
-
-    public static double obtuseAtan(double x, double y){
-        if(x>0&&y>=0) return Math.atan(y/x);
-        if(x<=0&&y>0) return Math.atan(-x/y)+Math.PI/2d;
-        if(x<0&&y<=0) return Math.atan(y/x)+Math.PI/2d;
-        if(x>=0&&y<0) return Math.atan(-x/y)+3d*Math.PI/2d;
-        return Integer.MIN_VALUE;
     }
     
 }
