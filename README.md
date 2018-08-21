@@ -3,8 +3,12 @@ Repository of random projects
 
 Controls:
 
-o/l - Louder/quieter
-wasd - movement
-scroll - switch weapon (top left)
-space - shoot
-f - use item
+O/L - Louder/quieter (removed sound for debugging)
+
+WASD - movement
+
+SCROLL - switch weapon (top left)
+
+SPACE - shoot
+
+F - use item
